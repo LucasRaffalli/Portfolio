@@ -1,0 +1,27 @@
+/* Small screens et plus (≥ 640px) */
+@media (min-width: 640px) {}
+
+/* Large screens et plus (≥ 1024px) */
+@media (min-width: 1024px) {
+    .anom {
+        top: -30% !important;
+        left: -14% !important;
+
+    }
+
+    .hephai {
+        left: -14% !important;
+    }
+}
+
+.svg-img {
+    pointer-events: auto;
+    z-index: 0;
+    transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.svg-img.active {
+    opacity: .25;
+    pointer-events: auto;
+    z-index: 0;
+}

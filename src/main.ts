@@ -1,6 +1,55 @@
 import { bootstrapApplication } from '@angular/platform-browser';
 import { appConfig } from './app/app.config';
 import { App } from './app/app';
+import gsap from 'gsap';
 
-bootstrapApplication(App, appConfig)
-  .catch((err) => console.error(err));
+const animateLoader = () => {
+  return new Promise<void>((resolve) => {
+    const tl = gsap.timeline({
+      onComplete: () => {
+        // L'écran disparaît d'un coup mais fluidement
+        const loader = document.getElementById('loader');
+        if (loader) {
+          gsap.to(loader, {
+            duration: 0.2,
+            opacity: 0,
+            ease: 'power3.out',
+            onComplete: () => {
+              loader.remove();
+              resolve(); // ← déclenche Angular après disparition complète
+            }
+          });
+        } else {
+          resolve(); // fail-safe
+        }
+      }
+    });
+
+    // Séquence : apparition → name disparaît → title disparaît → écran disparaît
+    tl.from('.name', {
+      duration: 1,
+      opacity: 1,
+      ease: 'power4.out',
+    })
+      .from('.title', {
+        duration: 1,
+        opacity: 1,
+        ease: 'power4.out',
+      }, "-=0.7")
+      .to('.name', {
+        duration: 0.8,
+        opacity: 0,
+        ease: 'power2.inOut',
+      }, "+=0.3") // name disparaît d'abord
+      .to('.title', {
+        duration: 0.8,
+        opacity: 0,
+        ease: 'power2.inOut',
+      }, "-=0.47"); // title disparaît peu de temps après
+  });
+};
+
+animateLoader().then(() => {
+  bootstrapApplication(App, appConfig)
+    .catch((err) => console.error(err));
+});

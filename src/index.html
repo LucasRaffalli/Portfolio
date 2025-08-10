@@ -1,13 +1,36 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
-  <title>Portoflio</title>
+  <title>Lucas Raffalli</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
+
 <body>
+  <script>
+    // Applique le thème dès le chargement, avant Angular
+    try {
+      const theme = localStorage.getItem('theme');
+      if (
+        theme === 'dark' ||
+        (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)
+      ) {
+        document.documentElement.classList.add('dark');
+      }
+    } catch (e) { }
+  </script>
+  <div *ngIf="isLoading"
+    class="fixed inset-0 flex items-center justify-center z-50 bg-white text-black dark:bg-black dark:text-white transition-colors"
+    id="loader">
+    <div class="text-center flex align-middle justify-center gap-2" id="loader-content">
+      <h1 class="text-lg sm:text-3xl lg:text-5xl font-bold name">Lucas Raffalli</h1>
+      <h1 class="text-lg sm:text-3xl lg:text-5xl font-regular title">Portfolio</h1>
+    </div>
+  </div>
   <app-root></app-root>
 </body>
+
 </html>

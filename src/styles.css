@@ -1,1 +1,258 @@
-/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+@source "../node_modules/@acmecorp/ui-lib";
+
+* {
+    box-sizing: border-box;
+    font-family: 'Satoshi', sans-serif;
+}
+
+:root {
+    --background-color: #fff;
+    --text-color: #222;
+    --small-dark: #666666;
+    --small-dark2: #727272;
+    --border-color1: #4D4D4D;
+
+}
+
+.dark {
+    --background-color: #121212;
+    --text-color: #f1f1f1;
+    --color-black: #121212;
+}
+
+body {
+    background: var(--background-color);
+    color: var(--text-color);
+    transition: background 0.3s, color 0.3s;
+}
+
+
+.hover__underline__margin__hover {
+    z-index: 22;
+    cursor: pointer;
+    position: relative;
+    width: fit-content;
+    transition: 0.3s ease-in-out;
+    text-decoration: none;
+    color: var(--text-color);
+    ;
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: fit-content;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 1px;
+        background-color: var(--text-color);
+        transition: width 0.3s;
+    }
+
+    &:hover {
+        color: var(--small-dark2);
+        margin-left: .5rem;
+
+        &::after {
+            background-color: var(--small-dark2);
+            width: 100%;
+        }
+    }
+}
+
+.hover__underline {
+    z-index: 22;
+    cursor: pointer;
+    position: relative;
+    width: fit-content;
+    transition: 0.3s ease-in-out;
+    text-decoration: none;
+    color: var(--text-color);
+    ;
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: fit-content;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 1px;
+        background-color: var(--text-color);
+        transition: width 0.3s;
+    }
+
+    &:hover {
+        color: var(--small-dark2);
+
+        &::after {
+            background-color: var(--small-dark2);
+            width: 100%;
+        }
+    }
+}
+
+.hover__underline__right {
+    z-index: 22;
+    cursor: pointer;
+    position: relative;
+    width: fit-content;
+    transition: 0.3s ease-in-out;
+    text-decoration: none;
+    color: var(--text-color);
+    ;
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: fit-content;
+        bottom: 0;
+        right: 0;
+        width: 0;
+        height: 1px;
+        background-color: var(--text-color);
+        transition: width 0.3s;
+    }
+
+    &:hover {
+        color: var(--small-dark2);
+        margin-right: .5rem;
+
+        &::after {
+            background-color: var(--small-dark2);
+            width: 100%;
+        }
+    }
+}
+
+img,
+svg {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+
+    -webkit-user-drag: none;
+    user-drag: none;
+
+    pointer-events: none;
+}
+
+.router-wrapper {
+    z-index: 22;
+    position: relative;
+}
+
+.router-wrapper.animate.ultra>* {
+    animation: fadeInUltra 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    animation-fill-mode: both;
+}
+
+@keyframes fadeInUltra {
+    0% {
+        opacity: 0;
+        transform: scale(0.8) translateY(10px);
+    }
+
+    60% {
+        opacity: 0.9;
+        transform: scale(1.01) translateY(-2px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.square-icon {
+    width: 8px;
+    height: 8px;
+    border: 1px solid var(--border-color1);
+    border-radius: 1.5px;
+    cursor: pointer;
+    position: relative;
+}
+
+
+.square-icon.active {
+    background: var(--background-color);
+}
+
+.dark-icon {
+    background: transparent;
+}
+
+.dark-icon.active {
+    background: white;
+}
+
+.light-icon {
+    background: transparent;
+}
+
+.light-icon.active {
+    background: black;
+}
+
+
+.bg__texture {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    background-image: url('/images/noise_texture_2.jpg');
+    mix-blend-mode: overlay;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: .25
+}
+
+.light .bg__texture {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    background-image: url('/images/noise_texture_2.jpg');
+    mix-blend-mode: difference;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: .1
+}
+
+.actif__link {
+    font-weight: bold;
+    margin-left: .5rem;
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: fit-content;
+        bottom: 0;
+        left: 0;
+        width: 105%;
+        height: 1.8px;
+        background-color: var(--text-color);
+        transition: width 0.3s;
+    }
+
+}
+
+.actif__link:hover {
+
+
+    &::after {
+
+        background-color: var(--small-dark2);
+    }
+
+}

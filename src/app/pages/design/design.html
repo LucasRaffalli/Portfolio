@@ -1,0 +1,232 @@
+<section class="h-full w-240 flex flex-col justify-center designpage">
+    <!-- Bouton des filtres -->
+    <!-- <div class="relative top-4 left-4 z-50">
+        <button (click)="toggleFilters()" class="p-3 flex items-center gap-2 transition-all duration-200">
+            <i-lucide [name]="Filter" [size]="20"></i-lucide>
+            <span class="text-sm font-medium">Filtres1</span>
+            <span *ngIf="selectedTags.length > 0 || selectedProjects.length > 0"
+                class="bg-blue-500 text-white text-xs rounded-full px-2 py-1 min-w-[20px] text-center">
+                {{ selectedTags.length + selectedProjects.length }}
+            </span>
+        </button>
+    </div> -->
+
+    <!-- Panel des filtres -->
+    <!-- <div *ngIf="showFilters"class="absolute top-16 left-4 z-50 bg__glass p-4 rounded-lg min-w-[300px] max-w-[400px] filter-panel"> -->
+    <!-- <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold">Filtres2</h3>
+            <button (click)="clearAllFilters()" class="text-sm text-blue-400 hover:text-blue-300 transition-colors">
+                Effacer tout
+            </button>
+        </div> -->
+
+    <!-- Filtres par Tags -->
+    <!-- <div class="mb-4" *ngIf="availableTags.length > 0">
+            <h4 class="text-sm font-medium mb-2 text-gray-300">Tags</h4>
+            <div class="flex flex-wrap gap-2">
+                <button *ngFor="let tag of availableTags" (click)="toggleTag(tag)" [class]="selectedTags.includes(tag) 
+                                ? 'bg-blue-500 text-white' 
+                                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'"
+                    class="px-3 py-1 rounded-full text-sm transition-all duration-200 filter-button">
+                    {{ tag }}
+                </button>
+            </div>
+        </div> -->
+
+    <!-- Filtres par Projets -->
+    <!-- <div class="mb-4" *ngIf="availableProjects.length > 0">
+            <h4 class="text-sm font-medium mb-2 text-gray-300">Projets</h4>
+            <div class="flex flex-wrap gap-2">
+                <button *ngFor="let project of availableProjects" (click)="toggleProject(project)" [class]="selectedProjects.includes(project) 
+                                ? 'bg-green-500 text-white' 
+                                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'"
+                    class="px-3 py-1 rounded-full text-sm transition-all duration-200 filter-button">
+                    {{ project }}
+                </button>
+            </div>
+        </div> -->
+
+    <!-- Compteur de résultats -->
+    <!-- <div class="text-sm text-gray-400 border-t pt-2">
+            {{ filteredImages.length }} image{{ filteredImages.length > 1 ? 's' : '' }} trouvée{{ filteredImages.length
+            > 1 ? 's' : '' }}
+        </div> -->
+    <!-- </div> -->
+    <button (click)="mobileFiltersOpen = true"
+        class=" px-10 fixed bottom-4 left-1/2 transform -translate-x-1/2 z-[9999] bg-white text-black sm:hidden px-4 py-2 rounded-lg shadow-lg">
+        Filtre
+    </button>
+    <div *ngIf="mobileFiltersOpen"
+        class="fixed inset-0 bg-black/95 z-[9999] text-white sm:hidden p-6 overflow-auto menu__mobile flex flex-col">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold uppercase">Filtres</h2>
+            <button (click)="mobileFiltersOpen = false">
+                <i-lucide [name]="X" [size]="20" class="text-white"></i-lucide>
+            </button>
+        </div>
+
+        <div class="mb-6">
+            <button (click)="showTags = !showTags" class="flex items-center gap-2 w-full">
+                <i-lucide [name]="showTags ? ChevronDown : ChevronRight" [size]="20"></i-lucide>
+                <span class="text-lg font-semibold uppercase">Tags</span>
+            </button>
+            <div *ngIf="showTags" class="mt-2 flex flex-col gap-2 ml-4">
+                <button *ngFor="let tag of availableTags" (click)="toggleTag(tag)"
+                    [ngClass]="selectedTags.includes(tag) ? 'actif__link' : ''"
+                    class="text-left text-sm font-medium hover:underline">
+                    {{ tag }}
+                </button>
+            </div>
+        </div>
+
+        <div class="mb-6 h-full">
+            <button (click)="showProjects = !showProjects" class="flex items-center gap-2 w-full ">
+                <i-lucide [name]="showProjects ? ChevronDown : ChevronRight" [size]="20"></i-lucide>
+                <span class="text-lg font-semibold uppercase">Projets</span>
+            </button>
+            <div *ngIf="showProjects" class="mt-2 flex flex-col gap-2 ml-4">
+                <button *ngFor="let project of availableProjects" (click)="toggleProject(project)"
+                    [ngClass]="selectedProjects.includes(project) ? 'actif__link' : ''"
+                    class="text-left text-sm font-medium hover:underline">
+                    {{ project }}
+                </button>
+            </div>
+        </div>
+
+        <button (click)="mobileFiltersOpen = false"
+            class="mt-8 text-center w-full bg-white text-black font-bold py-2 rounded">
+            Appliquer les filtres
+        </button>
+    </div>
+    <nav class="hidden sm:flex flex-col gap-5 fixed bottom-12 left-17 ">
+        <span class="font-bold text-xl uppercase">Filtre</span>
+        <div>
+            <button (click)="showTags = !showTags" class="flex gap-2 w-20 items-center">
+                <i-lucide [name]="showTags ? ChevronDown : ChevronRight" [size]="18"></i-lucide>
+                <span class="font-bold text-xl uppercase">
+                    Tags
+                </span>
+            </button>
+            <div *ngIf="showTags" class=" flex flex-col gap-1 ml-7 font-bold">
+                <button *ngFor="let tag of availableTags" (click)="toggleTag(tag)"
+                    [ngClass]="selectedTags.includes(tag) ? 'actif__link': ''" class="hover__underline__margin__hover">
+                    {{ tag }}
+                </button>
+            </div>
+        </div>
+
+
+        <div>
+            <button (click)="showProjects = !showProjects" class="flex gap-2 w-20 items-center">
+                <i-lucide [name]="showProjects ? ChevronDown : ChevronRight" [size]="18"></i-lucide>
+                <span class="font-bold text-xl uppercase">
+                    Projets
+                </span>
+            </button>
+            <div *ngIf="showProjects" class=" flex flex-col gap-1  ml-7">
+                <button *ngFor="let project of availableProjects" (click)="toggleProject(project)"
+                    [ngClass]="selectedProjects.includes(project) ? 'actif__link' : ''"
+                    class="hover__underline__margin__hover font-bold">
+                    {{ project }}
+                </button>
+            </div>
+        </div>
+
+    </nav>
+    <!-- Carousel principal -->
+    <div (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()"
+        class="carousel__main absolute scale-[0.45] right-[80vh] bottom-90 sm:scale-[0.77] md:scale-[1] sm:right-[35%] md:right-0">
+        <div *ngFor="let concept of filteredImages; let i = index" class="carousel__block" [ngStyle]="getStyle(i)">
+            <section class="bg__glass p-2 rounded-md z-10 cursor-pointer transition-all duration-200 w-fit">
+                <div *ngIf="concept.images.length > 0" class="flex flex-col gap-2">
+                    <div (click)="openImageModal(concept, concept.images[0])">
+                        <img [src]="concept.images[0].url" class="carousel-item rounded-sm aspect-3/2 object-cover"
+                            [alt]="concept.images[0].alt || concept.title" />
+                    </div>
+                </div>
+                <div class="flex max-w-[1920px] h-full justify-between">
+                    <div class="carousel__title">
+                        {{ concept.title }}
+                    </div>
+                    <div class="carousel__date w-[100px]">
+                        {{ concept.year }}
+                    </div>
+                    <div class="carousel__link flex">
+                        <a [href]="concept.platformUrl" target="_blank">
+                            {{ concept.platform }}
+                        </a>
+                        <i-lucide [name]="ArrowUpRight" [size]="16" [strokeWidth]="3"></i-lucide>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Modal pour agrandir l'image -->
+    <div *ngIf="showModal"
+        class="fixed inset-0 w-full h-full flex items-center justify-center z-[9999] text-white modal-overlay"
+        (click)="closeImageModal()">
+        <div class="bg-black/94 w-full h-full modal-content p-10 " (click)="$event.stopPropagation()">
+            <section class="w-full flex justify-end">
+                <button (click)="closeImageModal()" class="w-fit z-10 bg-black/50 p-1 rounded-sm">
+                    <i-lucide [name]="X" [size]="20" class="text-white"></i-lucide>
+                </button>
+            </section>
+            <div class="flex gap-10 w-full h-full justify-between flex-col md:flex-row md:px-30">
+                <section class="overflow-hidden aspect-4/3 max-w-[100rem] flex flex-col">
+                    <img [src]="selectedImage!.url" [alt]="selectedImage?.alt || selectedConcept?.title"
+                        class="object-contain w-full h-full" />
+                    <section *ngIf="selectedConcept!.images.length > 1"
+                        class="preview__images flex  justify-center gap-2 mt-4  text-white z-500 w-full">
+                        <button (click)="prevImage()" class="z-500 cursor-pointer">
+                            <i-lucide [name]="ChevronLeft" [size]="24"></i-lucide>
+                        </button>
+                        <ng-container *ngFor="let img of selectedConcept?.images; let idx = index">
+                            <img [src]="img.url" [alt]="img.alt || selectedConcept?.title"
+                                class="w-18 h-18 object-cover border-2 transition-all duration-200 p-1"
+                                [ngClass]="{'border-white/20': selectedImage?.url === img.url, 'border-transparent': selectedImage?.url !== img.url}" />
+                        </ng-container>
+                        <button (click)="nextImage()" class="text-white z-500 cursor-pointer">
+                            <i-lucide [name]="ChevronRight" [size]="24"></i-lucide>
+                        </button>
+                    </section>
+                </section>
+                <Section class="flex flex-col w-fit max-w-[500px] flex-wrap">
+                    <div class="flex items-center gap-3">
+                        <h2 class="text-2xl md:text-3xl font-bold mb-2 text-white">{{ selectedConcept?.title }}</h2>
+                        <span>-</span>
+                        <p class="text-gray-400">{{ selectedConcept?.year }}</p>
+                    </div>
+                    <div *ngIf="selectedConcept?.description" class="mb-4">
+                        <p class="text-gray-300">{{ selectedConcept!.description }}</p>
+                    </div>
+                    <div *ngIf="selectedConcept && selectedConcept.tags && selectedConcept.tags.length > 0"
+                        class="mb-4">
+                        <div class="flex flex-wrap gap-2">
+                            <span *ngFor="let tag of selectedConcept.tags"
+                                class="bg-blue-500 text-white px-2 py-1 rounded text-sm">
+                                {{ tag }}
+                            </span>
+                        </div>
+                    </div>
+                    <div *ngIf="selectedConcept && selectedConcept.categories && selectedConcept.categories.length > 0"
+                        class="mb-4">
+                        <div class="flex flex-wrap gap-2">
+                            <span *ngFor="let cat of selectedConcept.categories"
+                                class="bg-green-500 text-white px-2 py-1 rounded text-sm">
+                                {{ cat }}
+                            </span>
+                        </div>
+                    </div>
+                    <div *ngIf="selectedConcept?.platformUrl" class="">
+                        <a [href]="selectedConcept!.platformUrl" target="_blank"
+                            class="inline-flex bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-all duration-200">
+                            <span>{{ selectedConcept!.platform }}</span>
+                            <i-lucide [name]="ArrowUpRight" [size]="16"></i-lucide>
+                        </a>
+                    </div>
+                </Section>
+            </div>
+        </div>
+    </div>
+</section>
