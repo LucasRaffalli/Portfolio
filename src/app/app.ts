@@ -19,7 +19,7 @@ export class App implements OnInit {
   theme: 'light' | 'dark' = 'light';
 
   @ViewChild('routerWrapper', { static: false }) routerWrapper!: ElementRef;
-  
+
   prepareRoute(outlet: RouterOutlet) {
     return outlet && outlet.activatedRouteData && outlet.activatedRouteData['animation'];
   }

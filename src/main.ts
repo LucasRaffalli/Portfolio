@@ -7,7 +7,6 @@ const animateLoader = () => {
   return new Promise<void>((resolve) => {
     const tl = gsap.timeline({
       onComplete: () => {
-        // L'écran disparaît d'un coup mais fluidement
         const loader = document.getElementById('loader');
         if (loader) {
           gsap.to(loader, {
@@ -16,16 +15,16 @@ const animateLoader = () => {
             ease: 'power3.out',
             onComplete: () => {
               loader.remove();
-              resolve(); // ← déclenche Angular après disparition complète
+              resolve();
             }
           });
         } else {
-          resolve(); // fail-safe
+          resolve();
         }
       }
     });
 
-    // Séquence : apparition → name disparaît → title disparaît → écran disparaît
+
     tl.from('.name', {
       duration: 1,
       opacity: 1,

@@ -1,0 +1,51 @@
+<section class="design__container">
+    <div class="carousel-container" [class.loading]="isLoading">
+        <!-- Carousel -->
+        <div *ngIf="!isLoading && designs.length > 0">
+            <div class="carousel-track flex flex-col gap-10 transition-transform duration-300 ease-in-out will-change-transform"
+                [style.transform]="'translateY(' + translateY + 'px)'">
+                <div *ngFor="let design of designs; trackBy: trackByFn; let i = index"
+                    [class.active]="i === currentIndex" [class.prev]="i === currentIndex - 1"
+                    [class.next]="i === currentIndex + 1" (click)="onItemClick(design, i)" class="flex flex-col gap-2">
+
+                    <div
+                        class="h-[350px] overflow-hidden relative transition-all duration-400 border-2 border-[var(--small-dark)] p-2 hover:border-white ease-in-out hover__img cursor-pointer">
+                        <img class="relative z-20 w-full h-full object-cover transition-all duration-300 ease-in-out"
+                            [src]="design.images[0].url" [alt]="design.images[0].alt" loading="lazy">
+                    </div>
+
+                    <div class="flex justify-between w-full">
+                        <h3 class="">{{ design.title }}</h3>
+                        <p class="">{{ design.year }}</p>
+                        <span class="hover__underline__right flex">{{ design.platform }} <i-lucide [name]="ArrowUpRight"
+                                [size]="16" [strokeWidth]="3"></i-lucide></span>
+                    </div>
+                </div>
+            </div>
+            <!-- Navigation -->
+            <div class="absolute top-1/2 -left-[160px] transform -translate-y-1/2 flex gap-6 items-center">
+                <div class="flex flex-col">
+                    <button class="hover__underline__top p-5" (click)="previousItem()" [disabled]="currentIndex === 0"
+                        title="Précédent (↑)">
+                        <i-lucide [name]="MoveUp" [size]="24" [strokeWidth]="3"></i-lucide>
+                    </button>
+                    <button class="hover__underline p-5 " (click)="nextItem()"
+                        [disabled]="currentIndex === designs.length - 1" title="Suivant (↓)">
+                        <i-lucide [name]="MoveDown" [size]="24" [strokeWidth]="3"></i-lucide>
+                    </button>
+                </div>
+                <div class="flex flex-col gap-4">
+                    <button *ngFor="let design of designs; let i = index"
+                        class="indicator w-2 h-2 border-0 rounded transition-all duration-300 linear cursor-pointer p-1"
+                        [class.active]="i === currentIndex" (click)="goToItem(i)" [title]="design.title">
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Instructions -->
+    <div class="absolute bottom-0 -left-[160px]  transform -translate-x-1/2 text-center text-xs bg-white/2 p-2 rounded backdrop-blur-xs">
+        <p>Utilisez les flèches ↑↓ ou la molette pour naviguer</p>
+    </div>
+</section>

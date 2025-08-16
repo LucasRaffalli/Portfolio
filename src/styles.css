@@ -92,6 +92,37 @@ body {
         }
     }
 }
+.hover__underline__top {
+    z-index: 22;
+    cursor: pointer;
+    position: relative;
+    width: fit-content;
+    transition: 0.3s ease-in-out;
+    text-decoration: none;
+    color: var(--text-color);
+    ;
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: fit-content;
+        left: 0;
+        width: 0;
+        height: 1px;
+        background-color: var(--text-color);
+        transition: width 0.3s;
+    }
+
+    &:hover {
+        color: var(--small-dark2);
+
+        &::after {
+            background-color: var(--small-dark2);
+            width: 100%;
+        }
+    }
+}
 
 .hover__underline__right {
     z-index: 22;
@@ -117,7 +148,7 @@ body {
 
     &:hover {
         color: var(--small-dark2);
-        margin-right: .5rem;
+        /* margin-right: .5rem; */
 
         &::after {
             background-color: var(--small-dark2);
