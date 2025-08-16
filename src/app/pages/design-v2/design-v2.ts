@@ -1,4 +1,4 @@
-import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit, AfterViewInit } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 import { Design } from '../../interfaces/design.interface';
 import { DesignService } from '../../services/design.service';
@@ -11,20 +11,32 @@ import { ExternalLink, LucideAngularModule, ArrowUpRight, X, Filter, ChevronDown
   templateUrl: './design-v2.html',
   styleUrl: './design-v2.css'
 })
-export class DesignV2Component implements OnInit, OnDestroy {
+export class DesignV2Component implements OnInit, AfterViewInit, OnDestroy {
   readonly ArrowUpRight = ArrowUpRight;
+  readonly X = X;
   readonly MoveDown = MoveDown;
   readonly MoveUp = MoveUp;
 
-  // Propriétés pour le template
   designs: Design[] = [];
   isLoading = true;
   currentIndex = 0;
   translateY = 0;
 
-  // Configuration
-  private readonly itemHeight = 400; // Hauteur d'un item en px
+  // Modal
+  isModalOpen = false;
+  selectedDesign: Design | null = null;
+  currentImageIndex = 0;
+
+  // Configuration pour hauteurs dynamiques
   private destroy$ = new Subject<void>();
+  private itemHeights: number[] = [];
+  private itemPositions: number[] = [];
+
+  // Propriétés pour le touch mobile
+  private touchStartY = 0;
+  private touchStartTime = 0;
+  private readonly minSwipeDistance = 50;
+  private readonly maxSwipeTime = 300;
 
   constructor(private designService: DesignService) { }
 
@@ -32,31 +44,41 @@ export class DesignV2Component implements OnInit, OnDestroy {
     this.loadDesigns();
   }
 
+  ngAfterViewInit() {
+    setTimeout(() => this.calculateItemHeights(), 200);
+  }
+
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
-  // Navigation clavier - écoute les touches fléchées
   @HostListener('document:keydown', ['$event'])
   handleKeyDown(event: KeyboardEvent) {
-    switch (event.key) {
-      case 'ArrowUp':
-        event.preventDefault();
-        this.previousItem();
-        break;
-      case 'ArrowDown':
-        event.preventDefault();
-        this.nextItem();
-        break;
+    if (this.isModalOpen && event.key === 'Escape') {
+      this.closeModal();
+      return;
+    }
+
+    if (!this.isModalOpen) {
+      switch (event.key) {
+        case 'ArrowUp':
+          event.preventDefault();
+          this.previousItem();
+          break;
+        case 'ArrowDown':
+          event.preventDefault();
+          this.nextItem();
+          break;
+      }
     }
   }
 
-  // Navigation molette - scroll haut/bas
   @HostListener('wheel', ['$event'])
   handleWheel(event: WheelEvent) {
-    event.preventDefault();
+    if (this.isModalOpen) return;
 
+    event.preventDefault();
     if (event.deltaY > 0) {
       this.nextItem();
     } else {
@@ -64,7 +86,39 @@ export class DesignV2Component implements OnInit, OnDestroy {
     }
   }
 
-  // Méthodes publiques utilisées dans le template
+  @HostListener('touchstart', ['$event'])
+  onTouchStart(event: TouchEvent) {
+    this.touchStartY = event.touches[0].clientY;
+    this.touchStartTime = Date.now();
+  }
+
+  @HostListener('touchmove', ['$event'])
+  onTouchMove(event: TouchEvent) {
+    event.preventDefault();
+  }
+
+  @HostListener('touchend', ['$event'])
+  onTouchEnd(event: TouchEvent) {
+    const touchEndY = event.changedTouches[0].clientY;
+    const touchEndTime = Date.now();
+
+    const deltaY = this.touchStartY - touchEndY;
+    const deltaTime = touchEndTime - this.touchStartTime;
+
+    if (Math.abs(deltaY) >= this.minSwipeDistance && deltaTime <= this.maxSwipeTime) {
+      if (deltaY > 0) {
+        this.nextItem();
+      } else {
+        this.previousItem();
+      }
+    }
+  }
+
+  @HostListener('window:resize')
+  onWindowResize() {
+    setTimeout(() => this.calculateItemHeights(), 100);
+  }
+
   trackByFn(index: number, design: Design): string {
     return design.id;
   }
@@ -90,15 +144,57 @@ export class DesignV2Component implements OnInit, OnDestroy {
 
   onItemClick(design: Design, index: number) {
     if (index === this.currentIndex) {
-      // Ouvrir le lien externe si c'est l'item actif
-      window.open(design.url, '_blank');
+      this.openModal(design);
     } else {
-      // Naviguer vers cet item
       this.goToItem(index);
     }
   }
 
-  // Méthodes privées
+  openModal(design: Design) {
+    this.selectedDesign = design;
+    this.isModalOpen = true;
+    this.currentImageIndex = 0;
+    document.body.style.overflow = 'hidden';
+  }
+  closeModal() {
+    this.isModalOpen = false;
+    this.selectedDesign = null;
+    this.currentImageIndex = 0;
+    document.body.style.overflow = 'auto';
+  }
+  // Changer l'image principale
+  selectImage(index: number) {
+    this.currentImageIndex = index;
+  }
+
+  openExternalLink(url: string) {
+    window.open(url, '_blank');
+  }
+
+  onImageLoad() {
+    setTimeout(() => this.calculateItemHeights(), 50);
+  }
+
+  private calculateItemHeights() {
+    const items = document.querySelectorAll('.carousel-track > div');
+
+    if (items.length === 0) return;
+
+    this.itemHeights = [];
+    this.itemPositions = [0];
+
+    items.forEach((item, index) => {
+      const rect = item.getBoundingClientRect();
+      this.itemHeights[index] = rect.height;
+
+      if (index > 0) {
+        this.itemPositions[index] = this.itemPositions[index - 1] + this.itemHeights[index - 1];
+      }
+    });
+
+    this.updateTransform();
+  }
+
   private loadDesigns() {
     this.designService.getDesigns()
       .pipe(takeUntil(this.destroy$))
@@ -106,6 +202,7 @@ export class DesignV2Component implements OnInit, OnDestroy {
         next: (designs) => {
           this.designs = designs;
           this.isLoading = false;
+          setTimeout(() => this.calculateItemHeights(), 300);
         },
         error: (error) => {
           console.error('Erreur chargement designs:', error);
@@ -115,6 +212,10 @@ export class DesignV2Component implements OnInit, OnDestroy {
   }
 
   private updateTransform() {
-    this.translateY = -this.currentIndex * this.itemHeight;
+    if (this.itemPositions.length > 0 && this.itemPositions[this.currentIndex] !== undefined) {
+      this.translateY = -this.itemPositions[this.currentIndex];
+    } else {
+      this.translateY = -this.currentIndex * 400;
+    }
   }
 }

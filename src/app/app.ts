@@ -1,10 +1,11 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SvgSwitcherComponent } from "./components/svg-switcher/svg-switcher";
 import { NavbarComponent } from "./components/navbar/navbar";
 import { ExternalLink, LucideAngularModule, ArrowUpRight } from 'lucide-angular';
 import { AngularSvgIconModule } from 'angular-svg-icon';
+import { DesignService } from './services/design.service';
 
 @Component({
   selector: 'app-root',
@@ -17,6 +18,7 @@ export class App implements OnInit {
   readonly ExternalLink = ExternalLink;
   readonly ArrowUpRight = ArrowUpRight
   theme: 'light' | 'dark' = 'light';
+  isDesignPage = false;
 
   @ViewChild('routerWrapper', { static: false }) routerWrapper!: ElementRef;
 
@@ -41,7 +43,17 @@ export class App implements OnInit {
     localStorage.setItem('theme', this.theme);
     this.applyTheme();
   }
-
+  constructor(
+    private designService: DesignService,
+    private router: Router
+  ) {
+    // Mettre à jour isDesignPage à chaque navigation
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.isDesignPage = event.urlAfterRedirects.includes('/design') || event.urlAfterRedirects.includes('/designs');
+      }
+    });
+  }
   applyTheme() {
     const root = document.documentElement;
     if (this.theme === 'dark') {

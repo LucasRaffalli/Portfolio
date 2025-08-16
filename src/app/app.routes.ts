@@ -21,6 +21,5 @@ export const routes: Routes = [
     { path: 'projects/anom', component: AnomPageComponent, data: { animation: 'AnomPage' } },
     { path: 'informations', component: InformationsComponent, data: { animation: 'InformationsPage' } },
     { path: 'design', component: DesignV2Component, data: { animation: 'DesignPage' } },
-    // { path: 'design', component: DesignComponent, data: { animation: 'DesignPage' } },
     { path: 'contact', component: ContactComponent, data: { animation: 'ContactPage' } }
 ];

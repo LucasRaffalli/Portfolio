@@ -2,39 +2,44 @@
     <div class="carousel-container" [class.loading]="isLoading">
         <!-- Carousel -->
         <div *ngIf="!isLoading && designs.length > 0">
-            <div class="carousel-track flex flex-col gap-10 transition-transform duration-300 ease-in-out will-change-transform"
+            <div class="carousel-track flex flex-col gap-10 transition-transform items-end duration-300 ease-in-out will-change-transform"
                 [style.transform]="'translateY(' + translateY + 'px)'">
                 <div *ngFor="let design of designs; trackBy: trackByFn; let i = index"
                     [class.active]="i === currentIndex" [class.prev]="i === currentIndex - 1"
-                    [class.next]="i === currentIndex + 1" (click)="onItemClick(design, i)" class="flex flex-col gap-2">
-
+                    [class.next]="i === currentIndex + 1" (click)="onItemClick(design, i)"
+                    class="flex items-end flex-col gap-2 carousel-item">
                     <div
-                        class="h-[350px] overflow-hidden relative transition-all duration-400 border-2 border-[var(--small-dark)] p-2 hover:border-white ease-in-out hover__img cursor-pointer">
-                        <img class="relative z-20 w-full h-full object-cover transition-all duration-300 ease-in-out"
-                            [src]="design.images[0].url" [alt]="design.images[0].alt" loading="lazy">
+                        class="w-42 h-[120px] sm:w-72 sm:h-[200px] lg:w-140 lg:h-[340px] xl:w-180 xl:h-[400px] overflow-hidden relative transition-all duration-400 border-2 border-[var(--border-color1)] p-2 hover:border-white ease-in-out hover__img cursor-pointer">
+                        <img class="relative z-20 w-full h-full object-cover object-center transition-all duration-300 ease-in-out"
+                            [src]="design.images[0].url" [alt]="design.images[0].alt" loading="lazy"
+                            (load)="onImageLoad()">
                     </div>
-
-                    <div class="flex justify-between w-full">
-                        <h3 class="">{{ design.title }}</h3>
-                        <p class="">{{ design.year }}</p>
-                        <span class="hover__underline__right flex">{{ design.platform }} <i-lucide [name]="ArrowUpRight"
-                                [size]="16" [strokeWidth]="3"></i-lucide></span>
+                    <div class="flex flex-col sm:flex-row justify-between w-full items-end">
+                        <h3 class="text-sm sm:text-base md:text-lg text-end">{{ design.title }}</h3>
+                        <p class="hidden sm:block text-sm sm:text-base md:text-lg">{{ design.year }}</p>
+                        <a href="http://{{ design.url }}" target="_blank" rel="noopener noreferrer"
+                            (click)="$event.stopPropagation()">
+                            <span class="hover__underline__right flex text-sm sm:text-base md:text-lg">
+                                {{design.platform }}
+                                <i-lucide [name]="ArrowUpRight" [size]="16" [strokeWidth]="3"></i-lucide>
+                            </span>
+                        </a>
                     </div>
                 </div>
             </div>
-            <!-- Navigation -->
-            <div class="absolute top-1/2 -left-[160px] transform -translate-y-1/2 flex gap-6 items-center">
-                <div class="flex flex-col">
-                    <button class="hover__underline__top p-5" (click)="previousItem()" [disabled]="currentIndex === 0"
-                        title="Précédent (↑)">
+            <div
+                class="absolute hidden md:flex transform -left-[42vw] bottom-[50px] scale-[0.55] sm:scale-[0.80] sm:bottom-0 sm:-left-[20vw] lg:-left-[10vw] sm:-translate-y-1/2 sm:top-1/2 flex flex-col sm:flex-row gap-6 items-center">
+                <div class="flex sm:flex-col">
+                    <button class="hover__underline__top p-2 sm:p-5" (click)="previousItem()"
+                        [disabled]="currentIndex === 0" title="Précédent (↑)">
                         <i-lucide [name]="MoveUp" [size]="24" [strokeWidth]="3"></i-lucide>
                     </button>
-                    <button class="hover__underline p-5 " (click)="nextItem()"
+                    <button class="hover__underline p-2 sm:p-5" (click)="nextItem()"
                         [disabled]="currentIndex === designs.length - 1" title="Suivant (↓)">
                         <i-lucide [name]="MoveDown" [size]="24" [strokeWidth]="3"></i-lucide>
                     </button>
                 </div>
-                <div class="flex flex-col gap-4">
+                <div class="flex gap-4 sm:flex-col">
                     <button *ngFor="let design of designs; let i = index"
                         class="indicator w-2 h-2 border-0 rounded transition-all duration-300 linear cursor-pointer p-1"
                         [class.active]="i === currentIndex" (click)="goToItem(i)" [title]="design.title">
@@ -44,8 +49,88 @@
         </div>
     </div>
 
-    <!-- Instructions -->
-    <div class="absolute bottom-0 -left-[160px]  transform -translate-x-1/2 text-center text-xs bg-white/2 p-2 rounded backdrop-blur-xs">
-        <p>Utilisez les flèches ↑↓ ou la molette pour naviguer</p>
+    <!-- Modal améliorée -->
+    <div *ngIf="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm"
+        (click)="closeModal()">
+
+        <div class="relative z-50 max-w-[97%] max-h-[100vh] h-screen w-full overflow-hidden p-10"
+            (click)="$event.stopPropagation()">
+
+            <button class="absolute top-12 right-12 z-20 p-2 cursor-pointer" (click)="closeModal()"
+                title="Fermer (Esc)">
+                <i-lucide [name]="X" [size]="20" [strokeWidth]="2" class="text-white"></i-lucide>
+            </button>
+
+            <div *ngIf="selectedDesign" class="flex flex-col lg:flex-row gap-4 max-h-[90vh]">
+
+                <div class="flex-1 relative overflow-hidden flex flex-col">
+                    <div class="flex-1 relative">
+                        <img [src]="selectedDesign.images[currentImageIndex].url"
+                            [alt]="selectedDesign.images[currentImageIndex].alt"
+                            class="w-full h-full object-cover transition-all duration-300">
+                    </div>
+                </div>
+
+                <!-- Section informations -->
+                <section class="informations flex flex-col gap-4">
+
+                    <div class="lg:w-96 p-6 overflow-y-auto border border-[var(--border-color1)] h-full">
+                        <div class="space-y-2">
+                            <h2 class="text-2xl lg:text-3xl font-light">{{ selectedDesign.title }}</h2>
+                            <p class="text-lg text-[var(--small-dark2)]">{{ selectedDesign.year }}</p>
+                        </div>
+
+                        <div class="space-y-2">
+                            <h3 class="text-sm font-medium text-[var(--text-color)] uppercase tracking-wider">Plateforme
+                            </h3>
+                            <a href="http://{{ selectedDesign.url }}" target="_blank" rel="noopener noreferrer"
+                                class="flex hover__underline">
+                                {{ selectedDesign.platform }}
+                                <i-lucide [name]="ArrowUpRight" [size]="16" [strokeWidth]="3"></i-lucide>
+                            </a>
+                        </div>
+
+                        <div *ngIf="selectedDesign.description" class="space-y-2">
+                            <h3 class="text-sm font-medium text-[var(--text-color)] uppercase tracking-wider">
+                                Description
+                            </h3>
+                            <p class="text-base text-[var(--small-dark2)] leading-relaxed">{{ selectedDesign.description
+                                }}
+                            </p>
+                        </div>
+
+                        <div *ngIf="selectedDesign.tags" class="space-y-2">
+                            <h3 class="text-sm font-medium text-[var(--text-color)] uppercase tracking-wider">Tags</h3>
+                            <div class="flex flex-wrap gap-2">
+                                <span *ngFor="let tag of selectedDesign.tags"
+                                    class="px-4 py-2 text-sm bg-[var(--background-color)] border border-[var(--border-color1)]">
+                                    {{ tag }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="selectedDesign.images && selectedDesign.images.length > 1"
+                        class="lg:w-96 p-6 flex flex-col justify-between overflow-y-auto border border-[var(--border-color1)] h-full">
+
+                        <div>
+                            <div class="flex gap-2 overflow-x-auto pb-2">
+                                <div *ngFor="let image of selectedDesign.images; let i = index"
+                                    class="flex-shrink-0 w-16 h-16 overflow-hidden border-2 cursor-pointer transition-all duration-200"
+                                    [class.border-white]="i === currentImageIndex"
+                                    [class.border-[var(--border-color1)]="i !== currentImageIndex"
+                                    [class.opacity-60]="i !== currentImageIndex" (click)="selectImage(i)">
+                                    <img [src]="image.url" [alt]="image.alt"
+                                        class="w-full h-full object-cover hover:scale-105 transition-transform">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-xs text-[var(--small-dark2)] mt-2 text-center">
+                            {{ currentImageIndex + 1 }} / {{ selectedDesign.images.length }}
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
     </div>
 </section>
