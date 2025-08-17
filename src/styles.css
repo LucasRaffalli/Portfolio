@@ -29,7 +29,7 @@ body {
 
 
 .hover__underline__margin__hover {
-    z-index: 22;
+    z-index: 4;
     cursor: pointer;
     position: relative;
     width: fit-content;
@@ -62,7 +62,7 @@ body {
 }
 
 .hover__underline {
-    z-index: 22;
+    z-index: 4;
     cursor: pointer;
     position: relative;
     width: fit-content;
@@ -93,7 +93,7 @@ body {
     }
 }
 .hover__underline__top {
-    z-index: 22;
+    z-index: 4;
     cursor: pointer;
     position: relative;
     width: fit-content;
@@ -125,7 +125,7 @@ body {
 }
 
 .hover__underline__right {
-    z-index: 22;
+    z-index: 4;
     cursor: pointer;
     position: relative;
     width: fit-content;
@@ -171,7 +171,7 @@ svg {
 }
 
 .router-wrapper {
-    z-index: 22;
+    z-index: 10;
     position: relative;
 }
 

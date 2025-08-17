@@ -1,6 +1,5 @@
 <section class="design__container">
     <div class="carousel-container" [class.loading]="isLoading">
-        <!-- Carousel -->
         <div *ngIf="!isLoading && designs.length > 0">
             <div class="carousel-track flex flex-col gap-10 transition-transform items-end duration-300 ease-in-out will-change-transform"
                 [style.transform]="'translateY(' + translateY + 'px)'">
@@ -49,8 +48,7 @@
         </div>
     </div>
 
-    <!-- Modal améliorée -->
-    <div *ngIf="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm"
+    <div *ngIf="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black"
         (click)="closeModal()">
 
         <div class="relative z-50 max-w-[97%] max-h-[100vh] h-screen w-full overflow-hidden p-10"
@@ -71,8 +69,7 @@
                     </div>
                 </div>
 
-                <!-- Section informations -->
-                <section class="informations flex flex-col gap-4">
+                <section class="informations flex flex-col justify-between gap-4">
 
                     <div class="lg:w-96 p-6 overflow-y-auto border border-[var(--border-color1)] h-full">
                         <div class="space-y-2">
@@ -115,10 +112,13 @@
                         <div>
                             <div class="flex gap-2 overflow-x-auto pb-2">
                                 <div *ngFor="let image of selectedDesign.images; let i = index"
-                                    class="flex-shrink-0 w-16 h-16 overflow-hidden border-2 cursor-pointer transition-all duration-200"
+                                    class="flex-shrink-0 w-16 h-16 overflow-hidden border-1 cursor-pointer transition-all duration-200"
                                     [class.border-white]="i === currentImageIndex"
                                     [class.border-[var(--border-color1)]="i !== currentImageIndex"
-                                    [class.opacity-60]="i !== currentImageIndex" (click)="selectImage(i)">
+                                    [class.opacity-60]="i !== currentImageIndex"
+                                    [class.p-0]="i !== currentImageIndex"
+                                    [class.p-2]="i === currentImageIndex"
+                                    (click)="selectImage(i)">
                                     <img [src]="image.url" [alt]="image.alt"
                                         class="w-full h-full object-cover hover:scale-105 transition-transform">
                                 </div>

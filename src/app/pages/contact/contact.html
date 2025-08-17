@@ -1,12 +1,74 @@
-<Section class="flex flex-col gap-5 h-full justify-center items-end">
-    <form action="mailto:lucasraffalli.dev@gmail.com" method="POST"
-        class="flex flex-col gap-5 m-0 sm:mr-60 md:mr-100">
-        <input type="email" name="email" required placeholder="Your mail" class="border-1 p-2 w-100" />
-        <input type="text" name="subject" required placeholder="Subject" class="border-1 p-2 w-100" />
-        <textarea name="message" rows="5" required placeholder="Your message" class="border-1 p-2 w-100"></textarea>
-        <button type="submit" class="bg-white text-black p-2">
-            Envoyer
-        </button>
-    </form>
+<!-- contact.html -->
+<section class="flex flex-col gap-5 h-full justify-center items-end w-full max-w-[600px]">
+    <form [formGroup]="contactForm" (ngSubmit)="onSubmit()"
+        class="flex flex-col gap-5 m-0 min-w-[180px] w-[20vw] md:mr-100 md:w-[400px]">
 
-</Section>
+        <!-- Message de succès -->
+        <div *ngIf="submitSuccess"
+            class="bg-green-500/20 border border-green-500 text-green-400 p-3 rounded animate-pulse">
+            ✓ Message envoyé avec succès !
+        </div>
+
+        <!-- Message d'erreur -->
+        <div *ngIf="submitError" class="bg-red-500/20 border border-red-500 text-red-400 p-3 rounded">
+            ✗ {{ submitError }}
+        </div>
+
+        <!-- Champ email -->
+        <div class="flex flex-col gap-1">
+            <input type="email" formControlName="email" placeholder="Your email"
+                class="border-1 p-2 transition-colors duration-200"
+                [class.border-red-500]="email?.invalid && email?.touched"
+                [class.border-green-500]="email?.valid && email?.touched" [disabled]="isSubmitting" />
+
+            <span *ngIf="email?.invalid && email?.touched" class="text-red-400 text-xs">
+                <span *ngIf="email?.errors?.['required']">L'email est requis</span>
+                <span *ngIf="email?.errors?.['email']">Format d'email invalide</span>
+            </span>
+        </div>
+
+        <!-- Champ subject -->
+        <div class="flex flex-col gap-1">
+            <input type="text" formControlName="subject" placeholder="Subject"
+                class="border-1 p-2 transition-colors duration-200"
+                [class.border-red-500]="subject?.invalid && subject?.touched"
+                [class.border-green-500]="subject?.valid && subject?.touched" [disabled]="isSubmitting" />
+
+            <span *ngIf="subject?.invalid && subject?.touched" class="text-red-400 text-xs">
+                <span *ngIf="subject?.errors?.['required']">Le sujet est requis</span>
+            </span>
+        </div>
+
+        <!-- Champ message -->
+        <div class="flex flex-col gap-1">
+            <textarea formControlName="message" rows="5" placeholder="Your message"
+                class="border-1 p-2 resize-none transition-colors duration-200"
+                [class.border-red-500]="message?.invalid && message?.touched"
+                [class.border-green-500]="message?.valid && message?.touched" [disabled]="isSubmitting"></textarea>
+
+            <span *ngIf="message?.invalid && message?.touched" class="text-red-400 text-xs">
+                <span *ngIf="message?.errors?.['required']">Le message est requis</span>
+            </span>
+        </div>
+
+        <!-- Bouton submit -->
+        <button type="submit"
+            class="bg-white text-black p-2 transition-all duration-200 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed relative"
+            [disabled]="contactForm.invalid || isSubmitting">
+
+            <!-- Texte normal -->
+            <span *ngIf="!isSubmitting">Envoyer</span>
+
+            <!-- État loading -->
+            <span *ngIf="isSubmitting" class="flex items-center justify-center gap-2">
+                <div class="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
+                Envoi en cours...
+            </span>
+        </button>
+
+        <!-- Compteur de caractères pour le message -->
+        <div *ngIf="message?.value" class="text-xs text-gray-400 text-right">
+            {{ message?.value.length }} caractères
+        </div>
+    </form>
+</section>
