@@ -3,7 +3,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { Design } from '../../interfaces/design.interface';
 import { DesignService } from '../../services/design.service';
 import { CommonModule } from '@angular/common';
-import { ExternalLink, LucideAngularModule, ArrowUpRight, X, Filter, ChevronDown, ChevronRight, ChevronLeft, MoveDown, MoveUp } from 'lucide-angular';
+import { ExternalLink, LucideAngularModule, ArrowUpRight, X, MoveDown, MoveUp } from 'lucide-angular';
 
 @Component({
   selector: 'app-design-v2',
@@ -27,12 +27,10 @@ export class DesignV2Component implements OnInit, AfterViewInit, OnDestroy {
   selectedDesign: Design | null = null;
   currentImageIndex = 0;
 
-  // Configuration pour hauteurs dynamiques
   private destroy$ = new Subject<void>();
   private itemHeights: number[] = [];
   private itemPositions: number[] = [];
 
-  // Propriétés pour le touch mobile amélioré
   private touchStartY = 0;
   private touchStartTime = 0;
   private isDragging = false;
@@ -86,7 +84,11 @@ export class DesignV2Component implements OnInit, AfterViewInit, OnDestroy {
 
   @HostListener('wheel', ['$event'])
   handleWheel(event: WheelEvent) {
-    if (this.isModalOpen || this.isDragging) return;
+    const target = event.target as HTMLElement;
+    const isFromOverlay = target.closest('.scroll-overlay') ||
+      target.closest('.design__container');
+
+    if (this.isModalOpen || this.isDragging || !isFromOverlay) return;
 
     event.preventDefault();
     if (event.deltaY > 0) {
