@@ -1,6 +1,6 @@
 <section class="design__container">
-    <div class="fixed top-0 right-0 w-screen h-screen bg-transparent z-1"></div>
     <div class="carousel-container" [class.loading]="isLoading">
+        <div class="scroll-overlay inset-0 top-7 left-35 rounded"></div>
         <div *ngIf="!isLoading && designs.length > 0">
             <div class="carousel-track flex flex-col gap-10 transition-transform items-end duration-300 ease-in-out will-change-transform"
                 [style.transform]="'translateY(' + translateY + 'px)'">
@@ -49,87 +49,83 @@
         </div>
     </div>
 
-    <div *ngIf="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black"
-        (click)="closeModal()">
+    <div *ngIf="isModalOpen" [class.open]="isModalOpen"
+        class="fixed inset-0 z-500 flex items-center justify-center bg-black" (click)="closeModal()">
 
-        <div class="relative z-50 max-w-[97%] max-h-[100vh] h-screen w-full overflow-hidden p-10"
-            (click)="$event.stopPropagation()">
+        <div class="relative flex flex-col justify-between lg:flex-row gap-4 h-screen p-2 lg:p-10"
+            *ngIf="selectedDesign" (click)="$event.stopPropagation()">
 
-            <button class="absolute top-12 right-12 z-20 p-2 cursor-pointer" (click)="closeModal()"
+            <button class="absolute right-0 lg:top-12 lg:right-12 z-20 p-2 cursor-pointer" (click)="closeModal()"
                 title="Fermer (Esc)">
                 <i-lucide [name]="X" [size]="20" [strokeWidth]="2" class="text-white"></i-lucide>
             </button>
 
-            <div *ngIf="selectedDesign" class="flex flex-col lg:flex-row gap-4 max-h-[90vh]">
 
-                <div class="flex-1 relative overflow-hidden flex flex-col">
-                    <div class="flex-1 relative">
-                        <img [src]="selectedDesign.images[currentImageIndex].url"
-                            [alt]="selectedDesign.images[currentImageIndex].alt"
-                            class="w-full h-full object-cover transition-all duration-300">
+            <div class="relative overflow-hidden flex flex-col modal-main-image z-10">
+                <div class="w-full xl:w-350 h-">
+                    <img [src]="selectedDesign.images[currentImageIndex].url"
+                        [alt]="selectedDesign.images[currentImageIndex].alt"
+                        class="w-full h-full object-cover md:object-contain transition-all duration-300">
+                </div>
+            </div>
+            <section class="informations flex flex-col justify-between gap-4 p-2">
+                <div class="lg:w-96 w-full p-6 overflow-y-auto border border-[var(--border-color1)] h-full w-full">
+                    <div class="space-y-2">
+                        <h2 class="text-2xl lg:text-3xl font-light">{{ selectedDesign.title }}</h2>
+                        <p class="text-lg text-[var(--small-dark2)]">{{ selectedDesign.year }}</p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <h3 class="text-sm font-medium text-[var(--text-color)] uppercase tracking-wider">Plateforme
+                        </h3>
+                        <a href="http://{{ selectedDesign.url }}" target="_blank" rel="noopener noreferrer"
+                            class="flex hover__underline">
+                            {{ selectedDesign.platform }}
+                            <i-lucide [name]="ArrowUpRight" [size]="16" [strokeWidth]="3"></i-lucide>
+                        </a>
+                    </div>
+
+                    <div *ngIf="selectedDesign.description" class="space-y-2">
+                        <h3 class="text-sm font-medium text-[var(--text-color)] uppercase tracking-wider">
+                            Description
+                        </h3>
+                        <p class="text-base text-[var(--small-dark2)] leading-relaxed">{{ selectedDesign.description
+                            }}
+                        </p>
+                    </div>
+
+                    <div *ngIf="selectedDesign.tags" class="space-y-2">
+                        <h3 class="text-sm font-medium text-[var(--text-color)] uppercase tracking-wider">Tags</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <span *ngFor="let tag of selectedDesign.tags"
+                                class="px-4 py-2 text-sm bg-[var(--background-color)] border border-[var(--border-color1)]">
+                                {{ tag }}
+                            </span>
+                        </div>
                     </div>
                 </div>
+                <div *ngIf="selectedDesign.images && selectedDesign.images.length > 1"
+                    class="lg:w-96 p-6 flex flex-col justify-between overflow-y-auto border border-[var(--border-color1)] h-full">
 
-                <section class="informations flex flex-col justify-between gap-4">
-
-                    <div class="lg:w-96 p-6 overflow-y-auto border border-[var(--border-color1)] h-full">
-                        <div class="space-y-2">
-                            <h2 class="text-2xl lg:text-3xl font-light">{{ selectedDesign.title }}</h2>
-                            <p class="text-lg text-[var(--small-dark2)]">{{ selectedDesign.year }}</p>
-                        </div>
-
-                        <div class="space-y-2">
-                            <h3 class="text-sm font-medium text-[var(--text-color)] uppercase tracking-wider">Plateforme
-                            </h3>
-                            <a href="http://{{ selectedDesign.url }}" target="_blank" rel="noopener noreferrer"
-                                class="flex hover__underline">
-                                {{ selectedDesign.platform }}
-                                <i-lucide [name]="ArrowUpRight" [size]="16" [strokeWidth]="3"></i-lucide>
-                            </a>
-                        </div>
-
-                        <div *ngIf="selectedDesign.description" class="space-y-2">
-                            <h3 class="text-sm font-medium text-[var(--text-color)] uppercase tracking-wider">
-                                Description
-                            </h3>
-                            <p class="text-base text-[var(--small-dark2)] leading-relaxed">{{ selectedDesign.description
-                                }}
-                            </p>
-                        </div>
-
-                        <div *ngIf="selectedDesign.tags" class="space-y-2">
-                            <h3 class="text-sm font-medium text-[var(--text-color)] uppercase tracking-wider">Tags</h3>
-                            <div class="flex flex-wrap gap-2">
-                                <span *ngFor="let tag of selectedDesign.tags"
-                                    class="px-4 py-2 text-sm bg-[var(--background-color)] border border-[var(--border-color1)]">
-                                    {{ tag }}
-                                </span>
+                    <div>
+                        <div class="flex gap-2 overflow-x-auto pb-2">
+                            <div *ngFor="let image of selectedDesign.images; let i = index"
+                                class="flex-shrink-0 w-16 h-16 overflow-hidden border-1 cursor-pointer transition-all duration-200"
+                                [class.border-white]="i === currentImageIndex"
+                                [class.border-[var(--border-color1)]="i !== currentImageIndex"
+                                [class.opacity-60]="i !== currentImageIndex" [class.p-0]="i !== currentImageIndex"
+                                [class.p-2]="i === currentImageIndex" (click)="selectImage(i)">
+                                <img [src]="image.url" [alt]="image.alt"
+                                    class="w-full h-full object-cover hover:scale-105 transition-transform">
                             </div>
                         </div>
                     </div>
-                    <div *ngIf="selectedDesign.images && selectedDesign.images.length > 1"
-                        class="lg:w-96 p-6 flex flex-col justify-between overflow-y-auto border border-[var(--border-color1)] h-full">
 
-                        <div>
-                            <div class="flex gap-2 overflow-x-auto pb-2">
-                                <div *ngFor="let image of selectedDesign.images; let i = index"
-                                    class="flex-shrink-0 w-16 h-16 overflow-hidden border-1 cursor-pointer transition-all duration-200"
-                                    [class.border-white]="i === currentImageIndex"
-                                    [class.border-[var(--border-color1)]="i !== currentImageIndex"
-                                    [class.opacity-60]="i !== currentImageIndex" [class.p-0]="i !== currentImageIndex"
-                                    [class.p-2]="i === currentImageIndex" (click)="selectImage(i)">
-                                    <img [src]="image.url" [alt]="image.alt"
-                                        class="w-full h-full object-cover hover:scale-105 transition-transform">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="text-xs text-[var(--small-dark2)] mt-2 text-center">
-                            {{ currentImageIndex + 1 }} / {{ selectedDesign.images.length }}
-                        </div>
+                    <div class="text-xs text-[var(--small-dark2)] mt-2 text-center">
+                        {{ currentImageIndex + 1 }} / {{ selectedDesign.images.length }}
                     </div>
-                </section>
-            </div>
+                </div>
+            </section>
         </div>
     </div>
 </section>

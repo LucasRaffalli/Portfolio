@@ -37,3 +37,73 @@
     transition: all;
     opacity: 0.5;
 }
+
+
+.scroll-overlay {
+    position: fixed;
+    width: calc(100vw - 10.5rem);
+    height: calc(100vh - 3.5rem);
+    z-index: -1;
+    background: transparent;
+}
+
+
+.carousel-item {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: itemFadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes itemFadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.open {
+    animation: modalFadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.informations,
+.modal-main-image {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: modalItemFadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    animation-delay: 0.15s;
+}
+
+@keyframes modalItemFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.img-modal {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
