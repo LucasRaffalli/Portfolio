@@ -1,4 +1,4 @@
-<Section class="HephaiPage h-full flex flex-col justify-between items-end w-[190px] sm:w-[220px]">
+<Section class="HephaiPage overflow-y-auto h-full w-[190px] sm:w-full flex flex-col gap-5 justify-between items-end">
     <div class="title flex flex-col items-end">
         <h1 class="text-3xl lg:text-5xl font-light tracking-tight text-right">Lumina</h1>
         <span class="text-sm sm:text-base lg:text-2xl w-[40vw] font-light tracking-tight text-right">Rich Presence
@@ -28,11 +28,11 @@
             Preview temps réel de la présence
         </span>
     </div>
-    <div class="liens flex items-end gap-10 md:w-[570px] justify-end">
+    <div class="liens flex flex-col sm:flex-row items-end gap-4 md:gap-10 md:w-[570px] justify-end">
+        <button (click)="openDoc()" class="hover__underline__margin__hover">Documentation</button>
         <div class="flex hover__underline">
             <a href="https://github.com/LucasRaffalli/Lumina" target="_blank">Github</a>
             <i-lucide [name]="ArrowUpRight" [size]="16" [strokeWidth]="3"></i-lucide>
         </div>
     </div>
-
 </Section>

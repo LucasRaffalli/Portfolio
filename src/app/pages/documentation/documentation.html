@@ -1,0 +1,45 @@
+@if (docData) {
+<div
+    class="fixed inset-0 top-0 w-screen p-6 md:relative md:inset-auto overflow-y-scroll w-full md:w-[68vw] h-full bg-[var(--background-color)] shadow rounded doc z-50 md:z-auto">
+
+    <button
+        class="md:hidden fixed bottom-4 right-4 bg-[var(--background-color-transparent)] hover:bg-gray-200 p-2 rounded shadow-lg z-20 transition-colors duration-200"
+        (click)="goBack()" aria-label="Retour">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+    </button>
+
+    <div class="doc-header mb-6 mt-12 md:mt-0">
+        <h1 class="text-3xl font-bold">{{ docData.title }}</h1>
+    </div>
+    <markdown [src]="docData.src" [title]="docData.title" class="markdown-content">
+    </markdown>
+</div>
+}
+@if (!docData && !loading) {
+<div
+    class="absolute inset-0 md:relative md:inset-auto error-container p-6 text-center w-full md:w-auto h-full md:h-auto z-50 md:z-auto bg-white md:bg-transparent">
+    <h2 class="text-xl font-bold text-red-500 mb-4">Documentation non trouvée</h2>
+    <p class="mb-4">Le projet "{{ projectName }}" n'existe pas ou sa documentation n'est pas disponible.</p>
+    <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" (click)="goBack()">
+        Retour
+    </button>
+</div>
+}
+@if (loading) {
+<div
+    class="absolute inset-0 md:relative md:inset-auto loading p-6 text-center w-full md:w-auto h-full md:h-auto z-50 md:z-auto bg-white md:bg-transparent">
+
+    <!-- Bouton retour mobile pour l'état de chargement -->
+    <button
+        class="md:hidden fixed top-4 left-4 bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-full shadow-lg z-10 transition-colors duration-200"
+        (click)="goBack()" aria-label="Retour">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+    </button>
+
+    <p class="text-gray-500 text-lg mt-12 md:mt-0">Chargement de la documentation...</p>
+</div>
+}

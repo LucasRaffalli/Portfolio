@@ -10,6 +10,7 @@ import { HephaiPageComponent } from './pages/projects/hephai-page/hephai-page';
 import { LuminaPageComponent } from './pages/projects/lumina-page/lumina-page';
 import { AnomPageComponent } from './pages/projects/anom-page/anom-page';
 import { DesignV2Component } from './pages/design-v2/design-v2';
+import { DocumentationComponent } from './pages/documentation/documentation';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent, data: { animation: 'HomePage' } },
@@ -21,5 +22,6 @@ export const routes: Routes = [
     { path: 'projects/anom', component: AnomPageComponent, data: { animation: 'AnomPage' } },
     { path: 'informations', component: InformationsComponent, data: { animation: 'InformationsPage' } },
     { path: 'design', component: DesignV2Component, data: { animation: 'DesignPage' } },
-    { path: 'contact', component: ContactComponent, data: { animation: 'ContactPage' } }
+    { path: 'contact', component: ContactComponent, data: { animation: 'ContactPage' } },
+    { path: 'doc/:project', component: DocumentationComponent },
 ];

@@ -1,0 +1,101 @@
+{
+    "designs": [
+        {
+            "id": "1",
+            "title": "Minature",
+            "year": 2025,
+            "platform": "Behance",
+            "url": "https://behance.net/project1",
+            "tags": [
+                "2025",
+                "Minature"
+            ],
+            "description": "Miniature détaillée",
+            "images": [
+                {
+                    "url": "2025/minature_1.jpg",
+                    "alt": "Miniature avec détails fins"
+                },
+                {
+                    "url": "2024/info_weapon_1.png",
+                    "alt": "Miniature avec détails fins"
+                }
+            ]
+        },
+        {
+            "id": "2",
+            "title": "Minature",
+            "year": 2024,
+            "platform": "Behance",
+            "url": "https://behance.net/project2",
+            "tags": [
+                "UI/UX",
+                "Minature"
+            ],
+            "description": "Miniature alternative",
+            "images": [
+                {
+                    "url": "2025/minature_3.jpg",
+                    "alt": "Interface e-commerce design"
+                }
+            ]
+        },
+        {
+            "id": "3",
+            "title": "Identité Visuelle Startup",
+            "year": 2023,
+            "platform": "Instagram",
+            "url": "https://instagram.com/p/project3",
+            "tags": [
+                "Branding",
+                "Logo",
+                "Startup"
+            ],
+            "description": "Création d'identité complète pour une startup tech",
+            "images": [
+                {
+                    "url": "2025/projet_1_wallpaper_variant_1.png",
+                    "alt": "Startup brand identity"
+                }
+            ]
+        },
+        {
+            "id": "4",
+            "title": "App Mobile Fitness",
+            "year": 2023,
+            "platform": "Figma",
+            "url": "https://figma.com/project4",
+            "tags": [
+                "Mobile",
+                "UI/UX",
+                "Fitness"
+            ],
+            "description": "Design complet d'une application mobile fitness",
+            "images": [
+                {
+                    "url": "2024/info_weapon_2.png",
+                    "alt": "App mobile fitness design"
+                }
+            ]
+        },
+        {
+            "id": "5",
+            "title": "Site Web Restaurant",
+            "year": 2023,
+            "platform": "Behance",
+            "url": "https://behance.net/project5",
+            "tags": [
+                "Web Design",
+                "Restaurant",
+                "Food"
+            ],
+            "description": "Site web moderne pour un restaurant gastronomique",
+            "images": [
+                {
+                    "url": "2024/info_weapon_1.png",
+                    "alt": "Site web restaurant design"
+                }
+            ]
+        }
+    ]
+}

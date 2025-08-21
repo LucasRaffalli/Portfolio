@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, NgModule, OnInit, ViewChild } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SvgSwitcherComponent } from "./components/svg-switcher/svg-switcher";
@@ -6,6 +6,8 @@ import { NavbarComponent } from "./components/navbar/navbar";
 import { ExternalLink, LucideAngularModule, ArrowUpRight } from 'lucide-angular';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { DesignService } from './services/design.service';
+import { MarkdownComponent } from 'ngx-markdown';
+
 
 @Component({
   selector: 'app-root',

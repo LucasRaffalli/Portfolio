@@ -2,98 +2,277 @@
     "designs": [
         {
             "id": "1",
-            "title": "Minature",
-            "year": 2025,
-            "platform": "Behance",
-            "url": "https://behance.net/project1",
+            "title": "Artwork",
+            "year": 2021,
+            "platform": "Artstation",
+            "url": "https://www.artstation.com/artwork/WK9A6Q",
             "tags": [
-                "2025",
-                "Minature"
+                "digital",
+                "illustration",
+                "2021"
             ],
-            "description": "Miniature détaillée",
+            "description": "Illustration digital personnage destiny 2",
             "images": [
                 {
-                    "url": "2025/minature_1.jpg",
-                    "alt": "Miniature avec détails fins"
-                },
-                {
-                    "url": "2024/info_weapon_1.png",
-                    "alt": "Miniature avec détails fins"
+                    "url": "2021/artwork_1.jpg",
+                    "alt": "Illustration digital personnage destiny 2"
                 }
             ]
         },
         {
             "id": "2",
-            "title": "Minature",
-            "year": 2024,
-            "platform": "Behance",
-            "url": "https://behance.net/project2",
+            "title": "Concept Art Character",
+            "year": 2021,
+            "platform": "",
+            "url": "",
             "tags": [
-                "UI/UX",
-                "Minature"
+                "digital",
+                "illustration",
+                "2021",
+                "concept art",
+                "character",
+                "weapon"
             ],
-            "description": "Miniature alternative",
+            "description": "Concept Art Character and Weapon",
             "images": [
                 {
-                    "url": "2025/minature_3.jpg",
-                    "alt": "Interface e-commerce design"
+                    "url": "2021/concept_1.png",
+                    "alt": "Concept Art Character"
+                },
+                {
+                    "url": "2021/concept_2.png",
+                    "alt": "Concept Art Weapon Sword"
                 }
             ]
         },
         {
             "id": "3",
-            "title": "Identité Visuelle Startup",
-            "year": 2023,
-            "platform": "Instagram",
-            "url": "https://instagram.com/p/project3",
+            "title": "Concept Art Weapon",
+            "year": 2021,
+            "platform": "",
+            "url": "",
             "tags": [
-                "Branding",
-                "Logo",
-                "Startup"
+                "digital",
+                "illustration",
+                "2021",
+                "concept art",
+                "weapon"
             ],
-            "description": "Création d'identité complète pour une startup tech",
+            "description": "Concept Art Weapon",
             "images": [
                 {
-                    "url": "2025/projet_1_wallpaper_variant_1.png",
-                    "alt": "Startup brand identity"
+                    "url": "2021/concept_weapon_1.png",
+                    "alt": "Concept Art Weapon"
                 }
             ]
         },
         {
             "id": "4",
-            "title": "App Mobile Fitness",
-            "year": 2023,
-            "platform": "Figma",
-            "url": "https://figma.com/project4",
+            "title": "Photobashing",
+            "year": 2021,
+            "platform": "Artstation",
+            "url": "https://www.artstation.com/artwork/L3weAv",
             "tags": [
-                "Mobile",
-                "UI/UX",
-                "Fitness"
+                "digital",
+                "photobashing",
+                "2021"
             ],
-            "description": "Design complet d'une application mobile fitness",
+            "description": "Photobashing",
             "images": [
                 {
-                    "url": "2024/info_weapon_2.png",
-                    "alt": "App mobile fitness design"
+                    "url": "2021/photobashing.jpg",
+                    "alt": "Photobashing"
                 }
             ]
         },
         {
             "id": "5",
-            "title": "Site Web Restaurant",
-            "year": 2023,
-            "platform": "Behance",
-            "url": "https://behance.net/project5",
+            "title": "Concept Art Weapon",
+            "year": 2022,
+            "platform": "Artstation",
+            "url": "https://www.artstation.com/artwork/o2y65L",
             "tags": [
-                "Web Design",
-                "Restaurant",
-                "Food"
+                "digital",
+                "illustration",
+                "2022",
+                "concept art",
+                "weapon"
             ],
-            "description": "Site web moderne pour un restaurant gastronomique",
+            "description": "Concept Art Weapon",
             "images": [
                 {
-                    "url": "2024/info_weapon_1.png",
-                    "alt": "Site web restaurant design"
+                    "url": "2022/concept_weapon_handcanon_vow_1.jpg",
+                    "alt": "Concept Art Weapon revolver Vow premiere vue"
+                },
+                {
+                    "url": "2022/concept_weapon_handcanon_vow_2.jpg",
+                    "alt": "Concept Art Weapon revolver Vow deuxieme vue"
+                }
+            ]
+        },
+        {
+            "id": "6",
+            "title": "Concept Art Weapon",
+            "year": 2023,
+            "platform": "Artstation",
+            "url": "https://www.artstation.com/artwork/lRA9Ya",
+            "tags": [
+                "digital",
+                "illustration",
+                "2023",
+                "concept art",
+                "weapon"
+            ],
+            "description": "Concept Art Weapon",
+            "images": [
+                {
+                    "url": "2023/concept_weapon_handcanon_duality_1.jpg",
+                    "alt": "Concept Art Weapon revolver Duality premiere vue"
+                }
+            ]
+        },
+        {
+            "id": "7",
+            "title": "Illustration 1",
+            "year": 2023,
+            "platform": "Artstation",
+            "url": "https://www.artstation.com/artwork/lRA9Ya",
+            "tags": [
+                "digital",
+                "illustration",
+                "2023"
+            ],
+            "description": "Illustration 1",
+            "images": [
+                {
+                    "url": "2023/draw_1.png",
+                    "alt": "Illustration 1"
+                }
+            ]
+        },
+        {
+            "id": "8",
+            "title": "Verité antique Information",
+            "year": 2024,
+            "platform": "Artstation",
+            "url": "https://www.artstation.com/artwork/lRA9Ya",
+            "tags": [
+                "digital",
+                "illustration",
+                "2024",
+                "weapon",
+                "information"
+            ],
+            "description": "Informations sur l'arme (Weapon Information, perks, mods)",
+            "images": [
+                {
+                    "url": "2024/info_weapon_verite_antique_vf.png",
+                    "alt": "Version française"
+                },
+                {
+                    "url": "2024/info_weapon_verite_antique_vo.png",
+                    "alt": "Version originale"
+                }
+            ]
+        },
+        {
+            "id": "9",
+            "title": "Mini Tools Calus Information",
+            "year": 2024,
+            "platform": "Artstation",
+            "url": "https://www.artstation.com/artwork/lRA9Ya",
+            "tags": [
+                "digital",
+                "illustration",
+                "2024",
+                "weapon",
+                "information"
+            ],
+            "description": "Informations sur l'arme (Weapon Information, perks, mods)",
+            "images": [
+                {
+                    "url": "2024/info_weapon_minitools_calus_vf.png",
+                    "alt": "Version française"
+                }
+            ]
+        },
+        {
+            "id": "10",
+            "title": "Miniature Dogme Fragmenté",
+            "year": 2025,
+            "platform": "Artstation",
+            "url": "https://www.artstation.com/artwork/lRA9Ya",
+            "tags": [
+                "digital",
+                "2025",
+                "information",
+                "miniature"
+            ],
+            "description": "Miniature Dogme Fragmenté",
+            "images": [
+                {
+                    "url": "2025/minature_dogme_1.jpg",
+                    "alt": "DayOne"
+                },
+                {
+                    "url": "2025/minature_dogme_2.jpg",
+                    "alt": "Flawless"
+                }
+            ]
+        },
+        {
+            "id": "11",
+            "title": "Miniature Hote Versper",
+            "year": 2025,
+            "platform": "Artstation",
+            "url": "https://www.artstation.com/artwork/lRA9Ya",
+            "tags": [
+                "digital",
+                "2025",
+                "information",
+                "miniature"
+            ],
+            "description": "Miniature Dogme Fragmenté",
+            "images": [
+                {
+                    "url": "2025/minature_versper_1.png",
+                    "alt": "DayOne"
+                }
+            ]
+        },
+        {
+            "id": "12",
+            "title": "Anomaly Assets",
+            "year": 2025,
+            "platform": "Artstation",
+            "url": "https://www.artstation.com/artwork/lRA9Ya",
+            "tags": [
+                "digital",
+                "2025",
+                "information",
+                "miniature"
+            ],
+            "description": "Les assets Anomaly de la simple icone jusqu'au fond écran",
+            "images": [
+                {
+                    "url": "2025/anomaly/anomaly_banner_original.png",
+                    "alt": "Banniere originale"
+                },
+                {
+                    "url": "2025/anomaly/anomaly_icon_original.png",
+                    "alt": "Icône originale"
+                },
+                {
+                    "url": "2025/anomaly/anomaly_wallpaper_EOF.png",
+                    "alt": "Fond d'écran variante de theme \"confin du destin destiny 2\""
+                },
+                {
+                    "url": "2025/anomaly/anomaly_icon_EOF.png",
+                    "alt": "Premiere Icone variante de theme \"confin du destin destiny 2\""
+                },
+                {
+                    "url": "2025/anomaly/anomaly_icon_EOF_2.png",
+                    "alt": "Deuxieme Icone variante de theme \"confin du destin destiny 2\""
                 }
             ]
         }

@@ -1,0 +1,154 @@
+/* Styles dédiés au markdown - Compatible avec votre thème dark/light */
+@import 'prismjs/themes/prism-okaidia.css';
+@import 'prismjs/plugins/line-numbers/prism-line-numbers.css';
+@import 'prismjs/plugins/line-highlight/prism-line-highlight.css';
+.markdown-content {
+    line-height: 1.7;
+    color: var(--text-color);
+    background-color: red !important;
+    overflow: hidden;
+}
+
+/* Typography hiérarchique */
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4,
+.markdown-content h5,
+.markdown-content h6 {
+    margin-top: 3rem;
+    color: red;
+    margin-bottom: 1rem;
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--text-color);
+    font-family: 'Satoshi', sans-serif;
+}
+
+.markdown-content h1:first-child,
+.markdown-content h2:first-child,
+.markdown-content h3:first-child,
+.markdown-content h4:first-child,
+.markdown-content h5:first-child,
+.markdown-content h6:first-child {
+    margin-top: 0;
+}
+
+.markdown-content h1 {
+    font-size: 2.5rem;
+    border-bottom: 2px solid var(--border-color1);
+    padding-bottom: 0.5rem;
+}
+
+.markdown-content h2 {
+    font-size: 2rem;
+    border-bottom: 1px solid var(--border-color1);
+    padding-bottom: 0.3rem;
+}
+
+.markdown-content h3 {
+    font-size: 1.75rem;
+}
+
+.markdown-content h4 {
+    font-size: 1.5rem;
+}
+
+.markdown-content h5 {
+    font-size: 1.25rem;
+}
+
+.markdown-content h6 {
+    font-size: 1rem;
+    color: var(--small-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Paragraphes */
+.markdown-content p {
+    margin-bottom: 1.25rem;
+    line-height: 1.7;
+}
+
+/* Listes */
+.markdown-content ul,
+.markdown-content ol {
+    margin-bottom: 1.5rem;
+    padding-left: 2rem;
+}
+
+.markdown-content li {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+}
+
+.markdown-content li p {
+    margin-bottom: 0.75rem;
+}
+
+.markdown-content ul {
+    list-style-type: disc;
+}
+
+.markdown-content ul ul {
+    list-style-type: circle;
+    margin-top: 0.5rem;
+}
+
+.markdown-content ul ul ul {
+    list-style-type: square;
+}
+
+.markdown-content ol {
+    list-style-type: decimal;
+}
+
+.markdown-content ol ol {
+    list-style-type: lower-alpha;
+    margin-top: 0.5rem;
+}
+
+.markdown-content ol ol ol {
+    list-style-type: lower-roman;
+}
+
+/* Citations */
+.markdown-content blockquote {
+    margin: 2rem 0;
+    padding: 1.5rem 2rem;
+    border-left: 4px solid var(--border-color1);
+    background: linear-gradient(135deg, transparent 0%, rgba(77, 77, 77, 0.05) 100%);
+    font-style: italic;
+    position: relative;
+}
+
+.markdown-content blockquote::before {
+    content: '"';
+    font-size: 4rem;
+    color: var(--small-dark);
+    position: absolute;
+    top: -0.5rem;
+    left: 0.5rem;
+    opacity: 0.3;
+}
+
+.markdown-content blockquote p {
+    margin-bottom: 1rem;
+}
+
+.markdown-content blockquote p:last-child {
+    margin-bottom: 0;
+}
+
+.markdown-content cite {
+    display: block;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: var(--small-dark);
+    font-style: normal;
+}
+
+.markdown-content cite::before {
+    content: '— ';
+}

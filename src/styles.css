@@ -1,5 +1,6 @@
 @import "tailwindcss";
-@source "../node_modules/@acmecorp/ui-lib";
+@import './css/markdown.css';
+
 
 * {
     box-sizing: border-box;
@@ -8,6 +9,8 @@
 
 :root {
     --background-color: #fff;
+    --background-color-transparent: rgba(18, 18, 18, 0.1);
+
     --text-color: #222;
     --small-dark: #666666;
     --small-dark2: #727272;
@@ -17,8 +20,15 @@
 
 .dark {
     --background-color: #121212;
+    --background-color-transparent: rgba(255, 255, 255, 0.1);
     --text-color: #f1f1f1;
     --color-black: #121212;
+}
+
+.bgBlurTheme {
+    backdrop-filter: blur(3px);
+    border: 1px solid calc(var(--border-color1) + 2%);
+    background: calc(var(--background-color) + 10%);
 }
 
 body {
@@ -92,6 +102,39 @@ body {
         }
     }
 }
+
+.hover__underline__invert {
+    z-index: 4;
+    cursor: pointer;
+    position: relative;
+    width: fit-content;
+    transition: 0.3s ease-in-out;
+    text-decoration: none;
+    color: var(--small-dark2);
+    ;
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: fit-content;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 1px;
+        background-color: var(--small-dark2);
+        transition: width 0.3s;
+    }
+
+    &:hover {
+        color: var(--text-color);
+
+        &::after {
+            background-color: var(--text-color);
+            width: 100%;
+        }
+    }
+}
+
 .hover__underline__top {
     z-index: 4;
     cursor: pointer;
@@ -286,4 +329,27 @@ svg {
         background-color: var(--small-dark2);
     }
 
+}
+
+
+.doc {
+    scrollbar-width: thin;
+    scrollbar-color: #ccc transparent;
+    padding-right: 12px;
+}
+
+.doc::-webkit-scrollbar {
+    width: 6px;
+    background: transparent;
+}
+
+.doc::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 3px;
+    margin-right: 6px;
+}
+
+.doc::-webkit-scrollbar-track {
+    background: transparent;
+    margin-right: 6px;
 }
