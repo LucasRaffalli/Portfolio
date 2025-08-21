@@ -34,14 +34,15 @@ export class DesignV2Component implements OnInit, AfterViewInit, OnDestroy {
   private touchStartY = 0;
   private touchStartTime = 0;
   private isDragging = false;
+  private isScrolling = false;
   private dragOffset = 0;
   private startTranslateY = 0;
   private velocity = 0;
   private lastTouchY = 0;
   private lastTouchTime = 0;
   private animationFrame: number | null = null;
-
-  private readonly snapThreshold = 0.3;
+  private scrollTimeout: number | null = null;
+  private wheelAccumulator = 0;
 
   constructor(private designService: DesignService) { }
 
@@ -59,6 +60,9 @@ export class DesignV2Component implements OnInit, AfterViewInit, OnDestroy {
     if (this.animationFrame) {
       cancelAnimationFrame(this.animationFrame);
     }
+    if (this.scrollTimeout) {
+      clearTimeout(this.scrollTimeout);
+    }
   }
 
   @HostListener('document:keydown', ['$event'])
@@ -68,7 +72,7 @@ export class DesignV2Component implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    if (!this.isModalOpen && !this.isDragging) {
+    if (!this.isModalOpen && !this.isDragging && !this.isScrolling) {
       switch (event.key) {
         case 'ArrowUp':
           event.preventDefault();
@@ -91,11 +95,36 @@ export class DesignV2Component implements OnInit, AfterViewInit, OnDestroy {
     if (this.isModalOpen || this.isDragging || !isFromOverlay) return;
 
     event.preventDefault();
-    if (event.deltaY > 0) {
-      this.nextItem();
-    } else {
-      this.previousItem();
+
+    this.isScrolling = true;
+    this.wheelAccumulator += event.deltaY;
+
+    // Applique le scroll de manière fluide
+    const scrollSensitivity = 0.5;
+    const newTranslateY = this.translateY - (event.deltaY * scrollSensitivity);
+
+    // Limite le scroll dans les bornes
+    const maxTranslateY = 0;
+    const minTranslateY = this.itemPositions.length > 0
+      ? -this.itemPositions[this.itemPositions.length - 1]
+      : -(this.designs.length - 1) * 400;
+
+    this.translateY = Math.max(minTranslateY, Math.min(maxTranslateY, newTranslateY));
+
+    // Met à jour currentIndex pendant le scroll
+    this.updateCurrentIndex();
+
+    // Reset le timeout de fin de scroll
+    if (this.scrollTimeout) {
+      clearTimeout(this.scrollTimeout);
     }
+
+    // Attend la fin du scroll pour snapper au plus proche
+    this.scrollTimeout = window.setTimeout(() => {
+      this.snapToClosest();
+      this.isScrolling = false;
+      this.wheelAccumulator = 0;
+    }, 150);
   }
 
   @HostListener('touchstart', ['$event'])
@@ -114,6 +143,11 @@ export class DesignV2Component implements OnInit, AfterViewInit, OnDestroy {
     if (this.animationFrame) {
       cancelAnimationFrame(this.animationFrame);
       this.animationFrame = null;
+    }
+
+    if (this.scrollTimeout) {
+      clearTimeout(this.scrollTimeout);
+      this.scrollTimeout = null;
     }
   }
 
@@ -140,10 +174,12 @@ export class DesignV2Component implements OnInit, AfterViewInit, OnDestroy {
     let finalOffset = this.dragOffset;
     const proposedTranslate = this.startTranslateY + finalOffset;
 
+    // Effet de rebond en haut
     if (proposedTranslate > 0) {
       finalOffset = this.dragOffset * 0.3;
     }
 
+    // Effet de rebond en bas
     const maxTranslate = this.itemPositions.length > 0 ?
       -this.itemPositions[this.itemPositions.length - 1] :
       -(this.designs.length - 1) * 400;
@@ -154,6 +190,9 @@ export class DesignV2Component implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.translateY = this.startTranslateY + finalOffset;
+
+    // Met à jour currentIndex en temps réel pendant le drag
+    this.updateCurrentIndex();
   }
 
   @HostListener('touchend', ['$event'])
@@ -162,31 +201,13 @@ export class DesignV2Component implements OnInit, AfterViewInit, OnDestroy {
 
     this.isDragging = false;
 
-    const touchEndY = event.changedTouches[0].clientY;
-    const totalDelta = touchEndY - this.touchStartY;
-
-    let targetIndex = this.currentIndex;
-
+    // Si la vélocité est importante, continue le scroll avec momentum
     if (Math.abs(this.velocity) > 300) {
-      if (this.velocity < 0 && this.currentIndex < this.designs.length - 1) {
-        targetIndex = this.currentIndex + 1;
-      } else if (this.velocity > 0 && this.currentIndex > 0) {
-        targetIndex = this.currentIndex - 1;
-      }
+      this.applyMomentumScroll();
     } else {
-      const currentItemHeight = this.itemHeights[this.currentIndex] || 400;
-      const threshold = currentItemHeight * this.snapThreshold;
-
-      if (Math.abs(totalDelta) > threshold) {
-        if (totalDelta < 0 && this.currentIndex < this.designs.length - 1) {
-          targetIndex = this.currentIndex + 1;
-        } else if (totalDelta > 0 && this.currentIndex > 0) {
-          targetIndex = this.currentIndex - 1;
-        }
-      }
+      // Sinon snap immédiatement au plus proche
+      this.snapToClosest();
     }
-
-    this.animateToIndex(targetIndex);
   }
 
   @HostListener('window:resize')
@@ -265,7 +286,7 @@ export class DesignV2Component implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
-    if (!this.isDragging) {
+    if (!this.isDragging && !this.isScrolling) {
       this.updateTransform();
     }
   }
@@ -292,6 +313,83 @@ export class DesignV2Component implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.translateY = -this.currentIndex * 400;
     }
+  }
+
+  private snapToClosest() {
+    if (this.itemPositions.length === 0) return;
+
+    let closestIndex = 0;
+    let minDistance = Math.abs(this.translateY);
+
+    this.itemPositions.forEach((position, index) => {
+      const distance = Math.abs(this.translateY + position);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestIndex = index;
+      }
+    });
+
+    // Ne fait l'animation que si on n'est pas déjà sur le bon élément
+    if (closestIndex !== this.currentIndex ||
+      Math.abs(this.translateY + this.itemPositions[closestIndex]) > 5) {
+      this.currentIndex = closestIndex;
+      this.animateToIndex(closestIndex);
+    }
+  }
+
+  private applyMomentumScroll() {
+    let currentVelocity = this.velocity;
+    const deceleration = 0.95;
+    const minVelocity = 50;
+
+    const momentum = () => {
+      currentVelocity *= deceleration;
+
+      if (Math.abs(currentVelocity) < minVelocity) {
+        this.snapToClosest();
+        return;
+      }
+
+      const newTranslateY = this.translateY + currentVelocity / 60;
+
+      // Limite le scroll dans les bornes
+      const maxTranslateY = 0;
+      const minTranslateY = this.itemPositions.length > 0
+        ? -this.itemPositions[this.itemPositions.length - 1]
+        : -(this.designs.length - 1) * 400;
+
+      if (newTranslateY > maxTranslateY || newTranslateY < minTranslateY) {
+        this.snapToClosest();
+        return;
+      }
+
+      this.translateY = newTranslateY;
+      this.updateCurrentIndex();
+      this.animationFrame = requestAnimationFrame(momentum);
+    };
+
+    if (this.animationFrame) {
+      cancelAnimationFrame(this.animationFrame);
+    }
+
+    this.animationFrame = requestAnimationFrame(momentum);
+  }
+
+  private updateCurrentIndex() {
+    if (this.itemPositions.length === 0) return;
+
+    let closestIndex = 0;
+    let minDistance = Math.abs(this.translateY);
+
+    this.itemPositions.forEach((position, index) => {
+      const distance = Math.abs(this.translateY + position);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestIndex = index;
+      }
+    });
+
+    this.currentIndex = closestIndex;
   }
 
   private animateToIndex(targetIndex: number) {
