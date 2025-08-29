@@ -65,6 +65,7 @@ export class DesignV2Component implements OnInit, AfterViewInit, OnDestroy {
   private readonly DEFAULT_ITEM_HEIGHT = 400;
   private readonly SCROLL_TIMEOUT = 150;
   private readonly ANIMATION_MAX_DURATION = 300;
+  private readonly MAX_OVERSCROLL = 100;
 
   ngOnInit() {
     this.loadDesigns();
@@ -128,8 +129,12 @@ export class DesignV2Component implements OnInit, AfterViewInit, OnDestroy {
 
     this.scrollState.isDragging = false;
 
-    if (Math.abs(this.scrollState.velocity) > this.VELOCITY_THRESHOLD) {
+    if (this.isOutOfBounds()) {
+      this.snapToBounds();
+    } else if (Math.abs(this.scrollState.velocity) > this.VELOCITY_THRESHOLD) {
       this.applyMomentumScroll();
+    } else {
+      this.snapToNearestItem();
     }
   }
 
@@ -253,24 +258,14 @@ export class DesignV2Component implements OnInit, AfterViewInit, OnDestroy {
 
     const finalOffset = this.calculateDragOffset();
     this.translateY = this.scrollState.startTranslateY + finalOffset;
+
+    this.translateY = this.clampTranslateYWithOverscroll(this.translateY);
+
     this.updateCurrentIndex();
   }
 
   private calculateDragOffset(): number {
-    let finalOffset = this.scrollState.dragOffset;
-    const proposedTranslate = this.scrollState.startTranslateY + finalOffset;
-
-    if (proposedTranslate > 0) {
-      finalOffset = this.scrollState.dragOffset * this.OVERSCROLL_DAMPING;
-    }
-
-    const maxTranslate = this.getMaxTranslate();
-    if (proposedTranslate < maxTranslate) {
-      const overscroll = proposedTranslate - maxTranslate;
-      finalOffset = this.scrollState.dragOffset + overscroll * this.OVERSCROLL_DAMPING;
-    }
-
-    return finalOffset;
+    return this.scrollState.dragOffset;
   }
 
   private scheduleHeightCalculation(delay: number) {
@@ -334,19 +329,18 @@ export class DesignV2Component implements OnInit, AfterViewInit, OnDestroy {
       currentVelocity *= this.DECELERATION;
 
       if (Math.abs(currentVelocity) < this.MIN_VELOCITY) {
-        this.triggerChangeDetection();
+        this.snapToNearestItem();
         return;
       }
 
       const newTranslateY = this.translateY + currentVelocity / 60;
-      const clampedY = this.clampTranslateY(newTranslateY);
+      const clampedY = this.clampTranslateYWithOverscroll(newTranslateY);
 
-      if (clampedY !== newTranslateY) {
-        this.triggerChangeDetection();
-        return;
+      if (Math.abs(clampedY - newTranslateY) > 1) {
+        currentVelocity *= 0.3;
       }
 
-      this.translateY = newTranslateY;
+      this.translateY = clampedY;
       this.updateCurrentIndex();
       this.triggerChangeDetection();
       this.animationId = requestAnimationFrame(momentum);
@@ -421,6 +415,53 @@ export class DesignV2Component implements OnInit, AfterViewInit, OnDestroy {
     const maxTranslateY = 0;
     const minTranslateY = this.getMaxTranslate();
     return Math.max(minTranslateY, Math.min(maxTranslateY, value));
+  }
+
+  private clampTranslateYWithOverscroll(value: number): number {
+    const maxTranslateY = 0;
+    const minTranslateY = this.getMaxTranslate();
+
+    if (value > maxTranslateY) {
+      return Math.min(value, maxTranslateY + this.MAX_OVERSCROLL);
+    }
+
+    if (value < minTranslateY) {
+      return Math.max(value, minTranslateY - this.MAX_OVERSCROLL);
+    }
+
+    return value;
+  }
+
+  private isOutOfBounds(): boolean {
+    const maxTranslateY = 0;
+    const minTranslateY = this.getMaxTranslate();
+    return this.translateY > maxTranslateY || this.translateY < minTranslateY;
+  }
+
+  private snapToBounds() {
+    const maxTranslateY = 0;
+    const minTranslateY = this.getMaxTranslate();
+
+    let targetY = this.translateY;
+
+    if (this.translateY > maxTranslateY) {
+      targetY = maxTranslateY;
+      this.currentIndex = 0;
+    } else if (this.translateY < minTranslateY) {
+      targetY = minTranslateY;
+      this.currentIndex = this.designs.length - 1;
+    }
+
+    this.animateToPosition(targetY);
+  }
+
+  private snapToNearestItem() {
+    this.updateCurrentIndex();
+    const targetY = this.scrollState.itemPositions.length > 0
+      ? -this.scrollState.itemPositions[this.currentIndex]
+      : -this.currentIndex * this.DEFAULT_ITEM_HEIGHT;
+
+    this.animateToPosition(targetY);
   }
 
   private triggerChangeDetection() {
