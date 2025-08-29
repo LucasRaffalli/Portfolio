@@ -18,7 +18,7 @@
                             <span>
                                 {{ design.images.length }}
                             </span>
-                            <img class="w-8 h-8" src="images/multiple_indicator.png" alt="">
+                            <img class="w-8 h-8 mix-blend-difference" src="images/multiple_indicator.png" alt="">
                         </div>
                     </div>
                     <div class="flex flex-col sm:flex-row justify-between w-full items-end">
@@ -81,7 +81,7 @@
                         <i-lucide [name]="X" [size]="20" [strokeWidth]="2" class="text-[var(--text-color)] "></i-lucide>
                     </button>
                 </div>
-                <div class="lg:w-96 w-full p-6 overflow-y-auto border border-[var(--border-color1)] h-full w-full">
+                <div class="w-full p-6 overflow-y-auto border border-[var(--border-color1)] h-full w-full">
                     <div class="space-y-2">
                         <h2 class="text-2xl lg:text-3xl font-light">{{ selectedDesign.title }}</h2>
                         <p class="text-lg text-[var(--small-dark2)]">{{ selectedDesign.year }}</p>
