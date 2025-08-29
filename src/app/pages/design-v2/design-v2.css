@@ -2,7 +2,7 @@
     position: absolute;
     z-index: 10;
     top: 0%;
-    right: 1%;
+    right: 4%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -13,18 +13,9 @@
 }
 
 .indicator__multiple.starred {
-    position: absolute;
-    z-index: 10;
-    top: 0%;
-    right: 1%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 4rem;
+
     color: white;
     background: linear-gradient(to bottom, var(--goldOpacity5), transparent 90%);
-    height: 98%;
-    font-size: large;
 }
 
 .hover__img {
