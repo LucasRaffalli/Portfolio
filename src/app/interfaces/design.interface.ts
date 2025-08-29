@@ -1,5 +1,6 @@
 export interface Design {
     id: string;
+    stars: boolean;
     title: string;
     year: number;
     platform: string;

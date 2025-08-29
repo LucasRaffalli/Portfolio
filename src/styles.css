@@ -17,6 +17,10 @@
     --small-dark2: #727272;
     --border-color1: #4D4D4D;
 
+    --red: #DE1839;
+    --gold: #DEAC18;
+    --goldOpacity5: hsla(45, 80%, 48%, 0.8);
+
 }
 
 .dark {
@@ -203,8 +207,12 @@ body {
 }
 
 .btn__hover__close {
+    border: 1px solid transparent;
+
     &:hover {
-        background-color: red;
+        color: var(--red);
+        fill: var(--red);
+        border: 1px solid var(--red);
     }
 }
 

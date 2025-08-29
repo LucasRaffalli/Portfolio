@@ -2,6 +2,7 @@
     "designs": [
         {
             "id": "1",
+            "stars": false,
             "title": "Artwork",
             "year": 2021,
             "platform": "Artstation",
@@ -21,6 +22,7 @@
         },
         {
             "id": "2",
+            "stars": false,
             "title": "Concept Art Character",
             "year": 2021,
             "platform": "",
@@ -47,6 +49,7 @@
         },
         {
             "id": "3",
+            "stars": false,
             "title": "Concept Art Weapon",
             "year": 2021,
             "platform": "",
@@ -68,6 +71,7 @@
         },
         {
             "id": "4",
+            "stars": false,
             "title": "Photobashing",
             "year": 2021,
             "platform": "Artstation",
@@ -87,6 +91,7 @@
         },
         {
             "id": "5",
+            "stars": false,
             "title": "Concept Art Weapon",
             "year": 2022,
             "platform": "X (Twitter)",
@@ -112,6 +117,7 @@
         },
         {
             "id": "6",
+            "stars": false,
             "title": "Concept Art Weapon",
             "year": 2023,
             "platform": "X (Twitter)",
@@ -133,6 +139,7 @@
         },
         {
             "id": "7",
+            "stars": false,
             "title": "Illustration 1",
             "year": 2023,
             "platform": "",
@@ -152,6 +159,7 @@
         },
         {
             "id": "8",
+            "stars": true,
             "title": "Verité antique Information",
             "year": 2024,
             "platform": "X (Twitter)",
@@ -177,6 +185,7 @@
         },
         {
             "id": "9",
+            "stars": true,
             "title": "Mini Tools Calus Information",
             "year": 2024,
             "platform": "X (Twitter)",
@@ -198,6 +207,7 @@
         },
         {
             "id": "10",
+            "stars": false,
             "title": "Miniature Dogme Fragmenté",
             "year": 2025,
             "platform": "",
@@ -242,6 +252,7 @@
         },
         {
             "id": "12",
+            "stars": true,
             "title": "Anomaly Assets",
             "year": 2025,
             "platform": "",
@@ -273,6 +284,67 @@
                 {
                     "url": "2025/anomaly/anomaly_icon_EOF_2.png",
                     "alt": "Deuxieme Icone variante de theme \"confin du destin destiny 2\""
+                }
+            ]
+        },
+        {
+            "id": "13",
+            "stars": true,
+            "title": "Hephai",
+            "year": 2025,
+            "platform": "Behance",
+            "url": "",
+            "tags": [
+                "Projet",
+                "2025",
+                "information",
+                "facture"
+            ],
+            "description": "Projet Hephai",
+            "images": [
+                {
+                    "url": "2025/hephai/home_1.png",
+                    "alt": "Page Home "
+                },
+                {
+                    "url": "2025/hephai/color_2.png",
+                    "alt": "variante des colorations"
+                },
+                {
+                    "url": "2025/hephai/logo_4.png",
+                    "alt": "Creation du logo hephai page 1"
+                },
+                {
+                    "url": "2025/hephai/logo_5.png",
+                    "alt": "Creation du logo hephai page 2"
+                },
+                {
+                    "url": "2025/hephai/interface_6.png",
+                    "alt": "Creation des interfaces page 1"
+                },
+                {
+                    "url": "2025/hephai/interface_7.png",
+                    "alt": "Creation des interfaces page 2"
+                },
+                {
+                    "url": "2025/hephai/interface_8.png",
+                    "alt": "Creation des interfaces page 3"
+                },
+                {
+                    "url": "2025/hephai/interface_9.png",
+                    "alt": "Creation des interfaces page 4"
+                },
+                {
+                    "url": "2025/hephai/interface_10.png",
+                    "alt": "Creation des interfaces page 5"
+                },
+                {
+                    "url": "2025/hephai/architecture_11.png",
+                    "alt": "architecture de l'application"
+                },
+                {
+                    "url": "2025/hephai/mockup_12.png",
+                    "alt": "Mockup de l'application"
                 }
             ]
         }

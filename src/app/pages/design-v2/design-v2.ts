@@ -3,7 +3,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { Design } from '../../interfaces/design.interface';
 import { DesignService } from '../../services/design.service';
 import { CommonModule } from '@angular/common';
-import { ArrowUpRight, X, MoveDown, MoveUp, LucideAngularModule } from 'lucide-angular';
+import { ArrowUpRight, X, MoveDown, MoveUp, LucideAngularModule, Star, StarOff } from 'lucide-angular';
 
 @Component({
   selector: 'app-design-v2',
@@ -17,6 +17,8 @@ export class DesignV2Component implements OnInit, AfterViewInit, OnDestroy {
   readonly X = X;
   readonly MoveDown = MoveDown;
   readonly MoveUp = MoveUp;
+  readonly Star = Star;
+  readonly StarOff = StarOff;
 
   private readonly designService = inject(DesignService);
   private readonly cdr = inject(ChangeDetectorRef);
@@ -26,6 +28,8 @@ export class DesignV2Component implements OnInit, AfterViewInit, OnDestroy {
   isLoading = true;
   currentIndex = 0;
   translateY = 0;
+  starsFilter: boolean | null = null;
+  filteredDesigns: Design[] = [];
 
   // Modal
   isModalOpen = false;
@@ -148,7 +152,7 @@ export class DesignV2Component implements OnInit, AfterViewInit, OnDestroy {
   trackByFn = (index: number, design: Design): string => design.id;
 
   nextItem() {
-    if (!this.isInitialized || this.currentIndex >= this.designs.length - 1) return;
+    if (!this.isInitialized || this.currentIndex >= this.filteredDesigns.length - 1) return;
     this.animateToIndex(this.currentIndex + 1);
   }
 
@@ -300,6 +304,7 @@ export class DesignV2Component implements OnInit, AfterViewInit, OnDestroy {
       .subscribe({
         next: (designs) => {
           this.designs = designs;
+          this.filteredDesigns = [...designs];
           this.isLoading = false;
           this.isInitialized = true;
           this.cdr.markForCheck();
@@ -312,6 +317,23 @@ export class DesignV2Component implements OnInit, AfterViewInit, OnDestroy {
         }
       });
   }
+  setStarsFilter(value: boolean | null) {
+    this.starsFilter = value;
+    this.filterDesigns();
+    this.currentIndex = 0;
+    this.translateY = 0;
+    this.scheduleHeightCalculation(50);
+  }
+
+  private filterDesigns() {
+    if (this.starsFilter === null) {
+      this.filteredDesigns = [...this.designs];
+    } else {
+      this.filteredDesigns = this.designs.filter(design => design.stars === this.starsFilter);
+    }
+    this.cdr.markForCheck();
+  }
+
 
   private updateTransform() {
     const targetPosition = this.scrollState.itemPositions[this.currentIndex];
@@ -368,7 +390,7 @@ export class DesignV2Component implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private animateToIndex(targetIndex: number) {
-    if (targetIndex < 0 || targetIndex >= this.designs.length) return;
+    if (targetIndex < 0 || targetIndex >= this.filteredDesigns.length) return;
 
     this.currentIndex = targetIndex;
     const targetY = this.scrollState.itemPositions.length > 0
@@ -408,7 +430,7 @@ export class DesignV2Component implements OnInit, AfterViewInit, OnDestroy {
   private getMaxTranslate(): number {
     return this.scrollState.itemPositions.length > 0
       ? -this.scrollState.itemPositions[this.scrollState.itemPositions.length - 1]
-      : -(this.designs.length - 1) * this.DEFAULT_ITEM_HEIGHT;
+      : -(this.filteredDesigns.length - 1) * this.DEFAULT_ITEM_HEIGHT;
   }
 
   private clampTranslateY(value: number): number {
@@ -449,7 +471,7 @@ export class DesignV2Component implements OnInit, AfterViewInit, OnDestroy {
       this.currentIndex = 0;
     } else if (this.translateY < minTranslateY) {
       targetY = minTranslateY;
-      this.currentIndex = this.designs.length - 1;
+      this.currentIndex = this.filteredDesigns.length - 1;
     }
 
     this.animateToPosition(targetY);
