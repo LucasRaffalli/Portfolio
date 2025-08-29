@@ -10,6 +10,7 @@
 :root {
     --background-color: #fff;
     --background-color-transparent: rgba(18, 18, 18, 0.1);
+    --background-color-transparent2: rgba(255, 255, 255, 0.8);
 
     --text-color: #222;
     --small-dark: #666666;
@@ -20,6 +21,7 @@
 
 .dark {
     --background-color: #121212;
+    --background-color-transparent2: rgba(18, 18, 18, 0.8);
     --background-color-transparent: rgba(255, 255, 255, 0.1);
     --text-color: #f1f1f1;
     --color-black: #121212;
@@ -197,6 +199,12 @@ body {
             background-color: var(--small-dark2);
             width: 100%;
         }
+    }
+}
+
+.btn__hover__close {
+    &:hover {
+        background-color: red;
     }
 }
 

@@ -1,3 +1,17 @@
+.indicator__multiple {
+    position: absolute;
+    z-index: 10;
+    top: 0%;
+    right: 1%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 4rem;
+    background: linear-gradient(to bottom, var(--background-color-transparent2), transparent);
+    height: 95%;
+    font-size: large;
+}
+
 .hover__img {
     &:hover img {
         transform: scale(1.01);

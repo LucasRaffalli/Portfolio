@@ -1,15 +1,16 @@
-import { Component, HostListener, OnDestroy, OnInit, AfterViewInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit, AfterViewInit, ChangeDetectionStrategy, inject, ChangeDetectorRef } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 import { Design } from '../../interfaces/design.interface';
 import { DesignService } from '../../services/design.service';
 import { CommonModule } from '@angular/common';
-import { ExternalLink, LucideAngularModule, ArrowUpRight, X, MoveDown, MoveUp } from 'lucide-angular';
+import { ArrowUpRight, X, MoveDown, MoveUp, LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-design-v2',
   imports: [CommonModule, LucideAngularModule],
   templateUrl: './design-v2.html',
-  styleUrl: './design-v2.css'
+  styleUrl: './design-v2.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DesignV2Component implements OnInit, AfterViewInit, OnDestroy {
   readonly ArrowUpRight = ArrowUpRight;
@@ -17,6 +18,10 @@ export class DesignV2Component implements OnInit, AfterViewInit, OnDestroy {
   readonly MoveDown = MoveDown;
   readonly MoveUp = MoveUp;
 
+  private readonly designService = inject(DesignService);
+  private readonly cdr = inject(ChangeDetectorRef);
+
+  // État principal
   designs: Design[] = [];
   isLoading = true;
   currentIndex = 0;
@@ -27,215 +32,134 @@ export class DesignV2Component implements OnInit, AfterViewInit, OnDestroy {
   selectedDesign: Design | null = null;
   currentImageIndex = 0;
 
-  private destroy$ = new Subject<void>();
-  private itemHeights: number[] = [];
-  private itemPositions: number[] = [];
+  private readonly destroy$ = new Subject<void>();
 
-  private touchStartY = 0;
-  private touchStartTime = 0;
-  private isDragging = false;
-  private isScrolling = false;
-  private dragOffset = 0;
-  private startTranslateY = 0;
-  private velocity = 0;
-  private lastTouchY = 0;
-  private lastTouchTime = 0;
-  private animationFrame: number | null = null;
-  private scrollTimeout: number | null = null;
-  private wheelAccumulator = 0;
+  // scroll/touch
+  private scrollState = {
+    itemHeights: [] as number[],
+    itemPositions: [] as number[],
+    touchStartY: 0,
+    touchStartTime: 0,
+    isDragging: false,
+    isScrolling: false,
+    dragOffset: 0,
+    startTranslateY: 0,
+    velocity: 0,
+    lastTouchY: 0,
+    lastTouchTime: 0,
+    wheelAccumulator: 0
+  };
 
-  constructor(private designService: DesignService) { }
+  // Animations
+  private animationId: number | null = null;
+  private scrollTimeoutId: number | null = null;
+
+  private isInitialized = false;
+
+  // paramètres
+  private readonly SCROLL_SENSITIVITY = 0.5;
+  private readonly VELOCITY_THRESHOLD = 300;
+  private readonly MIN_VELOCITY = 50;
+  private readonly DECELERATION = 0.95;
+  private readonly OVERSCROLL_DAMPING = 0.3;
+  private readonly DEFAULT_ITEM_HEIGHT = 400;
+  private readonly SCROLL_TIMEOUT = 150;
+  private readonly ANIMATION_MAX_DURATION = 300;
 
   ngOnInit() {
     this.loadDesigns();
   }
 
   ngAfterViewInit() {
-    setTimeout(() => this.calculateItemHeights(), 200);
+    this.scheduleHeightCalculation(200);
   }
 
   ngOnDestroy() {
-    this.destroy$.next();
-    this.destroy$.complete();
-    if (this.animationFrame) {
-      cancelAnimationFrame(this.animationFrame);
-    }
-    if (this.scrollTimeout) {
-      clearTimeout(this.scrollTimeout);
-    }
+    this.cleanup();
   }
 
   @HostListener('document:keydown', ['$event'])
   handleKeyDown(event: KeyboardEvent) {
-    if (this.isModalOpen && event.key === 'Escape') {
-      this.closeModal();
+    if (!this.isInitialized || this.isModalOpen) {
+      if (event.key === 'Escape' && this.isModalOpen) this.closeModal();
       return;
     }
 
-    if (!this.isModalOpen && !this.isDragging && !this.isScrolling) {
-      switch (event.key) {
-        case 'ArrowUp':
-          event.preventDefault();
-          this.previousItem();
-          break;
-        case 'ArrowDown':
-          event.preventDefault();
-          this.nextItem();
-          break;
-      }
+    if (this.scrollState.isDragging || this.scrollState.isScrolling) return;
+
+    switch (event.key) {
+      case 'ArrowUp':
+        event.preventDefault();
+        this.previousItem();
+        break;
+      case 'ArrowDown':
+        event.preventDefault();
+        this.nextItem();
+        break;
     }
   }
 
   @HostListener('wheel', ['$event'])
   handleWheel(event: WheelEvent) {
-    const target = event.target as HTMLElement;
-    const isFromOverlay = target.closest('.scroll-overlay') ||
-      target.closest('.design__container');
-
-    if (this.isModalOpen || this.isDragging || !isFromOverlay) return;
+    if (!this.isInitialized || !this.canHandleScroll(event)) return;
 
     event.preventDefault();
-
-    this.isScrolling = true;
-    this.wheelAccumulator += event.deltaY;
-
-    // Applique le scroll de manière fluide
-    const scrollSensitivity = 0.5;
-    const newTranslateY = this.translateY - (event.deltaY * scrollSensitivity);
-
-    // Limite le scroll dans les bornes
-    const maxTranslateY = 0;
-    const minTranslateY = this.itemPositions.length > 0
-      ? -this.itemPositions[this.itemPositions.length - 1]
-      : -(this.designs.length - 1) * 400;
-
-    this.translateY = Math.max(minTranslateY, Math.min(maxTranslateY, newTranslateY));
-
-    // Met à jour currentIndex pendant le scroll
-    this.updateCurrentIndex();
-
-    // Reset le timeout de fin de scroll
-    if (this.scrollTimeout) {
-      clearTimeout(this.scrollTimeout);
-    }
-
-    // Attend la fin du scroll pour snapper au plus proche
-    this.scrollTimeout = window.setTimeout(() => {
-      this.snapToClosest();
-      this.isScrolling = false;
-      this.wheelAccumulator = 0;
-    }, 150);
+    this.handleWheelScroll(event.deltaY);
   }
 
   @HostListener('touchstart', ['$event'])
   onTouchStart(event: TouchEvent) {
-    if (this.isModalOpen) return;
-
-    this.touchStartY = event.touches[0].clientY;
-    this.lastTouchY = this.touchStartY;
-    this.touchStartTime = Date.now();
-    this.lastTouchTime = this.touchStartTime;
-    this.isDragging = true;
-    this.dragOffset = 0;
-    this.startTranslateY = this.translateY;
-    this.velocity = 0;
-
-    if (this.animationFrame) {
-      cancelAnimationFrame(this.animationFrame);
-      this.animationFrame = null;
-    }
-
-    if (this.scrollTimeout) {
-      clearTimeout(this.scrollTimeout);
-      this.scrollTimeout = null;
-    }
+    if (!this.isInitialized || this.isModalOpen) return;
+    this.initTouchGesture(event.touches[0]);
   }
 
   @HostListener('touchmove', ['$event'])
   onTouchMove(event: TouchEvent) {
-    if (this.isModalOpen || !this.isDragging) return;
+    if (!this.isInitialized || this.isModalOpen || !this.scrollState.isDragging) return;
 
     event.preventDefault();
-
-    const currentY = event.touches[0].clientY;
-    const currentTime = Date.now();
-
-    this.dragOffset = currentY - this.touchStartY;
-    const timeDelta = currentTime - this.lastTouchTime;
-
-    if (timeDelta > 0) {
-      const distanceDelta = currentY - this.lastTouchY;
-      this.velocity = distanceDelta / timeDelta * 1000;
-    }
-
-    this.lastTouchY = currentY;
-    this.lastTouchTime = currentTime;
-
-    let finalOffset = this.dragOffset;
-    const proposedTranslate = this.startTranslateY + finalOffset;
-
-    // Effet de rebond en haut
-    if (proposedTranslate > 0) {
-      finalOffset = this.dragOffset * 0.3;
-    }
-
-    // Effet de rebond en bas
-    const maxTranslate = this.itemPositions.length > 0 ?
-      -this.itemPositions[this.itemPositions.length - 1] :
-      -(this.designs.length - 1) * 400;
-
-    if (proposedTranslate < maxTranslate) {
-      const overscroll = proposedTranslate - maxTranslate;
-      finalOffset = this.dragOffset + overscroll * 0.3;
-    }
-
-    this.translateY = this.startTranslateY + finalOffset;
-
-    // Met à jour currentIndex en temps réel pendant le drag
-    this.updateCurrentIndex();
+    this.handleTouchMove(event.touches[0]);
+    this.triggerChangeDetection();
   }
 
   @HostListener('touchend', ['$event'])
   onTouchEnd(event: TouchEvent) {
-    if (this.isModalOpen || !this.isDragging) return;
+    if (!this.isInitialized || this.isModalOpen || !this.scrollState.isDragging) return;
 
-    this.isDragging = false;
+    this.scrollState.isDragging = false;
 
-    // Si la vélocité est importante, continue le scroll avec momentum
-    if (Math.abs(this.velocity) > 300) {
+    if (Math.abs(this.scrollState.velocity) > this.VELOCITY_THRESHOLD) {
       this.applyMomentumScroll();
-    } else {
-      // Sinon snap immédiatement au plus proche
-      this.snapToClosest();
     }
   }
 
   @HostListener('window:resize')
   onWindowResize() {
-    setTimeout(() => this.calculateItemHeights(), 100);
+    if (this.isInitialized) {
+      this.scheduleHeightCalculation(100);
+    }
   }
 
-  trackByFn(index: number, design: Design): string {
-    return design.id;
-  }
+  trackByFn = (index: number, design: Design): string => design.id;
 
   nextItem() {
-    if (this.currentIndex < this.designs.length - 1) {
-      this.animateToIndex(this.currentIndex + 1);
-    }
+    if (!this.isInitialized || this.currentIndex >= this.designs.length - 1) return;
+    this.animateToIndex(this.currentIndex + 1);
   }
 
   previousItem() {
-    if (this.currentIndex > 0) {
-      this.animateToIndex(this.currentIndex - 1);
-    }
+    if (!this.isInitialized || this.currentIndex <= 0) return;
+    this.animateToIndex(this.currentIndex - 1);
   }
 
   goToItem(index: number) {
+    if (!this.isInitialized) return;
     this.animateToIndex(index);
   }
 
   onItemClick(design: Design, index: number) {
+    if (!this.isInitialized) return;
+
     if (index === this.currentIndex) {
       this.openModal(design);
     } else {
@@ -248,45 +172,129 @@ export class DesignV2Component implements OnInit, AfterViewInit, OnDestroy {
     this.isModalOpen = true;
     this.currentImageIndex = 0;
     document.body.style.overflow = 'hidden';
+    this.cdr.markForCheck();
   }
 
   closeModal() {
     this.isModalOpen = false;
     this.selectedDesign = null;
     this.currentImageIndex = 0;
-    document.body.style.overflow = 'auto';
+    document.body.style.overflow = '';
+    this.cdr.markForCheck();
   }
 
   selectImage(index: number) {
     this.currentImageIndex = index;
+    this.cdr.markForCheck();
   }
 
   openExternalLink(url: string) {
-    window.open(url, '_blank');
+    window.open(url, '_blank', 'noopener,noreferrer');
   }
 
   onImageLoad() {
-    setTimeout(() => this.calculateItemHeights(), 50);
+    this.scheduleHeightCalculation(50);
+  }
+
+  private canHandleScroll(event: WheelEvent): boolean {
+    const target = event.target as HTMLElement;
+    const isFromOverlay = !!(target.closest('.scroll-overlay') || target.closest('.design__container'));
+
+    return !this.isModalOpen && !this.scrollState.isDragging && isFromOverlay;
+  }
+
+  private handleWheelScroll(deltaY: number) {
+    this.scrollState.isScrolling = true;
+    this.scrollState.wheelAccumulator += deltaY;
+
+    const newTranslateY = this.translateY - (deltaY * this.SCROLL_SENSITIVITY);
+    this.translateY = this.clampTranslateY(newTranslateY);
+    this.updateCurrentIndex();
+    this.triggerChangeDetection();
+
+    this.clearScrollTimeout();
+    this.scrollTimeoutId = window.setTimeout(() => {
+      this.scrollState.isScrolling = false;
+      this.scrollState.wheelAccumulator = 0;
+    }, this.SCROLL_TIMEOUT);
+  }
+
+  private initTouchGesture(touch: Touch) {
+    const currentTime = Date.now();
+
+    Object.assign(this.scrollState, {
+      touchStartY: touch.clientY,
+      lastTouchY: touch.clientY,
+      touchStartTime: currentTime,
+      lastTouchTime: currentTime,
+      isDragging: true,
+      dragOffset: 0,
+      velocity: 0
+    });
+
+    this.scrollState.startTranslateY = this.translateY;
+    this.cancelAnimations();
+  }
+
+  private handleTouchMove(touch: Touch) {
+    const currentY = touch.clientY;
+    const currentTime = Date.now();
+
+    this.scrollState.dragOffset = currentY - this.scrollState.touchStartY;
+
+    const timeDelta = currentTime - this.scrollState.lastTouchTime;
+    if (timeDelta > 0) {
+      const distanceDelta = currentY - this.scrollState.lastTouchY;
+      this.scrollState.velocity = (distanceDelta / timeDelta) * 1000;
+    }
+
+    this.scrollState.lastTouchY = currentY;
+    this.scrollState.lastTouchTime = currentTime;
+
+    const finalOffset = this.calculateDragOffset();
+    this.translateY = this.scrollState.startTranslateY + finalOffset;
+    this.updateCurrentIndex();
+  }
+
+  private calculateDragOffset(): number {
+    let finalOffset = this.scrollState.dragOffset;
+    const proposedTranslate = this.scrollState.startTranslateY + finalOffset;
+
+    if (proposedTranslate > 0) {
+      finalOffset = this.scrollState.dragOffset * this.OVERSCROLL_DAMPING;
+    }
+
+    const maxTranslate = this.getMaxTranslate();
+    if (proposedTranslate < maxTranslate) {
+      const overscroll = proposedTranslate - maxTranslate;
+      finalOffset = this.scrollState.dragOffset + overscroll * this.OVERSCROLL_DAMPING;
+    }
+
+    return finalOffset;
+  }
+
+  private scheduleHeightCalculation(delay: number) {
+    setTimeout(() => this.calculateItemHeights(), delay);
   }
 
   private calculateItemHeights() {
     const items = document.querySelectorAll('.carousel-track > div');
-
     if (items.length === 0) return;
 
-    this.itemHeights = [];
-    this.itemPositions = [0];
+    this.scrollState.itemHeights = [];
+    this.scrollState.itemPositions = [0];
 
     items.forEach((item, index) => {
-      const rect = item.getBoundingClientRect();
-      this.itemHeights[index] = rect.height;
+      const height = item.getBoundingClientRect().height;
+      this.scrollState.itemHeights[index] = height;
 
       if (index > 0) {
-        this.itemPositions[index] = this.itemPositions[index - 1] + this.itemHeights[index - 1];
+        this.scrollState.itemPositions[index] =
+          this.scrollState.itemPositions[index - 1] + this.scrollState.itemHeights[index - 1];
       }
     });
 
-    if (!this.isDragging && !this.isScrolling) {
+    if (!this.scrollState.isDragging && !this.scrollState.isScrolling) {
       this.updateTransform();
     }
   }
@@ -298,96 +306,69 @@ export class DesignV2Component implements OnInit, AfterViewInit, OnDestroy {
         next: (designs) => {
           this.designs = designs;
           this.isLoading = false;
-          setTimeout(() => this.calculateItemHeights(), 300);
+          this.isInitialized = true;
+          this.cdr.markForCheck();
+          this.scheduleHeightCalculation(50);
         },
         error: (error) => {
           console.error('Erreur chargement designs:', error);
           this.isLoading = false;
+          this.cdr.markForCheck();
         }
       });
   }
 
   private updateTransform() {
-    if (this.itemPositions.length > 0 && this.itemPositions[this.currentIndex] !== undefined) {
-      this.translateY = -this.itemPositions[this.currentIndex];
-    } else {
-      this.translateY = -this.currentIndex * 400;
-    }
-  }
+    const targetPosition = this.scrollState.itemPositions[this.currentIndex];
+    this.translateY = targetPosition !== undefined
+      ? -targetPosition
+      : -this.currentIndex * this.DEFAULT_ITEM_HEIGHT;
 
-  private snapToClosest() {
-    if (this.itemPositions.length === 0) return;
-
-    let closestIndex = 0;
-    let minDistance = Math.abs(this.translateY);
-
-    this.itemPositions.forEach((position, index) => {
-      const distance = Math.abs(this.translateY + position);
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestIndex = index;
-      }
-    });
-
-    // Ne fait l'animation que si on n'est pas déjà sur le bon élément
-    if (closestIndex !== this.currentIndex ||
-      Math.abs(this.translateY + this.itemPositions[closestIndex]) > 5) {
-      this.currentIndex = closestIndex;
-      this.animateToIndex(closestIndex);
-    }
+    this.triggerChangeDetection();
   }
 
   private applyMomentumScroll() {
-    let currentVelocity = this.velocity;
-    const deceleration = 0.95;
-    const minVelocity = 50;
+    let currentVelocity = this.scrollState.velocity;
 
     const momentum = () => {
-      currentVelocity *= deceleration;
+      currentVelocity *= this.DECELERATION;
 
-      if (Math.abs(currentVelocity) < minVelocity) {
-        this.snapToClosest();
+      if (Math.abs(currentVelocity) < this.MIN_VELOCITY) {
+        this.triggerChangeDetection();
         return;
       }
 
       const newTranslateY = this.translateY + currentVelocity / 60;
+      const clampedY = this.clampTranslateY(newTranslateY);
 
-      // Limite le scroll dans les bornes
-      const maxTranslateY = 0;
-      const minTranslateY = this.itemPositions.length > 0
-        ? -this.itemPositions[this.itemPositions.length - 1]
-        : -(this.designs.length - 1) * 400;
-
-      if (newTranslateY > maxTranslateY || newTranslateY < minTranslateY) {
-        this.snapToClosest();
+      if (clampedY !== newTranslateY) {
+        this.triggerChangeDetection();
         return;
       }
 
       this.translateY = newTranslateY;
       this.updateCurrentIndex();
-      this.animationFrame = requestAnimationFrame(momentum);
+      this.triggerChangeDetection();
+      this.animationId = requestAnimationFrame(momentum);
     };
 
-    if (this.animationFrame) {
-      cancelAnimationFrame(this.animationFrame);
-    }
-
-    this.animationFrame = requestAnimationFrame(momentum);
+    this.cancelAnimations();
+    this.animationId = requestAnimationFrame(momentum);
   }
 
   private updateCurrentIndex() {
-    if (this.itemPositions.length === 0) return;
+    if (this.scrollState.itemPositions.length === 0) return;
 
     let closestIndex = 0;
     let minDistance = Math.abs(this.translateY);
 
-    this.itemPositions.forEach((position, index) => {
-      const distance = Math.abs(this.translateY + position);
+    for (let i = 0; i < this.scrollState.itemPositions.length; i++) {
+      const distance = Math.abs(this.translateY + this.scrollState.itemPositions[i]);
       if (distance < minDistance) {
         minDistance = distance;
-        closestIndex = index;
+        closestIndex = i;
       }
-    });
+    }
 
     this.currentIndex = closestIndex;
   }
@@ -396,9 +377,9 @@ export class DesignV2Component implements OnInit, AfterViewInit, OnDestroy {
     if (targetIndex < 0 || targetIndex >= this.designs.length) return;
 
     this.currentIndex = targetIndex;
-    const targetY = this.itemPositions.length > 0 ?
-      -this.itemPositions[targetIndex] :
-      -targetIndex * 400;
+    const targetY = this.scrollState.itemPositions.length > 0
+      ? -this.scrollState.itemPositions[targetIndex]
+      : -targetIndex * this.DEFAULT_ITEM_HEIGHT;
 
     this.animateToPosition(targetY);
   }
@@ -406,7 +387,7 @@ export class DesignV2Component implements OnInit, AfterViewInit, OnDestroy {
   private animateToPosition(targetY: number) {
     const startY = this.translateY;
     const distance = targetY - startY;
-    const duration = Math.min(Math.abs(distance) / 2, 300);
+    const duration = Math.min(Math.abs(distance) / 2, this.ANIMATION_MAX_DURATION);
     const startTime = performance.now();
 
     const animate = (currentTime: number) => {
@@ -415,19 +396,61 @@ export class DesignV2Component implements OnInit, AfterViewInit, OnDestroy {
       const easeProgress = 1 - Math.pow(1 - progress, 3);
 
       this.translateY = startY + distance * easeProgress;
+      this.triggerChangeDetection();
 
       if (progress < 1) {
-        this.animationFrame = requestAnimationFrame(animate);
+        this.animationId = requestAnimationFrame(animate);
       } else {
-        this.animationFrame = null;
+        this.animationId = null;
         this.translateY = targetY;
+        this.triggerChangeDetection();
       }
     };
 
-    if (this.animationFrame) {
-      cancelAnimationFrame(this.animationFrame);
-    }
+    this.cancelAnimations();
+    this.animationId = requestAnimationFrame(animate);
+  }
 
-    this.animationFrame = requestAnimationFrame(animate);
+  private getMaxTranslate(): number {
+    return this.scrollState.itemPositions.length > 0
+      ? -this.scrollState.itemPositions[this.scrollState.itemPositions.length - 1]
+      : -(this.designs.length - 1) * this.DEFAULT_ITEM_HEIGHT;
+  }
+
+  private clampTranslateY(value: number): number {
+    const maxTranslateY = 0;
+    const minTranslateY = this.getMaxTranslate();
+    return Math.max(minTranslateY, Math.min(maxTranslateY, value));
+  }
+
+  private triggerChangeDetection() {
+    if (this.isInitialized) {
+      this.cdr.markForCheck();
+    }
+  }
+
+  private cancelAnimations() {
+    if (this.animationId) {
+      cancelAnimationFrame(this.animationId);
+      this.animationId = null;
+    }
+  }
+
+  private clearScrollTimeout() {
+    if (this.scrollTimeoutId) {
+      clearTimeout(this.scrollTimeoutId);
+      this.scrollTimeoutId = null;
+    }
+  }
+
+  private cleanup() {
+    this.destroy$.next();
+    this.destroy$.complete();
+    this.cancelAnimations();
+    this.clearScrollTimeout();
+
+    if (this.isModalOpen) {
+      document.body.style.overflow = '';
+    }
   }
 }
