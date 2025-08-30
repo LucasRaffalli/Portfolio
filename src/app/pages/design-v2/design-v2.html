@@ -1,6 +1,9 @@
 <section class="design__container">
     <div class="carousel-container" [class.loading]="isLoading">
-        <div class="scroll-overlay inset-0 top-7 left-35 rounded"></div>
+        <div
+            class="fixed inset-0 top-7 left-26 h-[calc(100vh-3.5rem)] w-[calc(100vw-8rem)] sm:w-[calc(100vw-10rem)] sm:left-35 rounded">
+        </div>
+        <div class="fixed inset-0 top-90 left-6 w-20 h-70 sm:w-29 sm:h-[calc(100vh-24.3rem)] rounded"></div>
         <div *ngIf="!isLoading && filteredDesigns.length > 0">
             <div class="carousel-track flex flex-col gap-10 transition-transform items-end duration-300 ease-in-out will-change-transform"
                 [style.transform]="'translateY(' + translateY + 'px)'">
