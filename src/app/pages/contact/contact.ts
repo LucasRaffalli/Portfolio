@@ -36,8 +36,7 @@ export class ContactComponent {
   submitSuccess = false;
   submitError = '';
 
-  // URL de ton API - à adapter selon ton environnement
-  private apiUrl = 'https://clarity-api.up.railway.app/api/mailer/send'; // ou ton URL de production
+  private apiUrl = 'https://clarity-api.up.railway.app/api/mailer/send';
 
   constructor(
     private http: HttpClient,
@@ -50,61 +49,61 @@ export class ContactComponent {
     });
   }
 
-  async onSubmit() {
-    if (this.contactForm.invalid) {
-      this.markFormGroupTouched();
-      return;
-    }
+  // async onSubmit() {
+  //   if (this.contactForm.invalid) {
+  //     this.markFormGroupTouched();
+  //     return;
+  //   }
 
-    this.isSubmitting = true;
-    this.submitError = '';
-    this.submitSuccess = false;
+  //   this.isSubmitting = true;
+  //   this.submitError = '';
+  //   this.submitSuccess = false;
 
-    try {
-      const formData: EmailRequest = this.contactForm.value;
+  //   try {
+  //     const formData: EmailRequest = this.contactForm.value;
 
-      const response = await this.http.post<EmailSuccessResponse>(`${this.apiUrl}`, formData).toPromise();
+  //     const response = await this.http.post<EmailSuccessResponse>(`${this.apiUrl}`, formData).toPromise();
 
-      if (response?.success) {
-        this.submitSuccess = true;
-        this.contactForm.reset();
+  //     if (response?.success) {
+  //       this.submitSuccess = true;
+  //       this.contactForm.reset();
 
-        // Reset le message de succès après 5 secondes
-        setTimeout(() => {
-          this.submitSuccess = false;
-        }, 5000);
-      }
-    } catch (error: any) {
-      console.error('Erreur lors de l\'envoi:', error);
+  //       // Reset le message de succès après 5 secondes
+  //       setTimeout(() => {
+  //         this.submitSuccess = false;
+  //       }, 5000);
+  //     }
+  //   } catch (error: any) {
+  //     console.error('Erreur lors de l\'envoi:', error);
 
-      if (error.status === 0) {
-        this.submitError = 'Impossible de contacter le serveur. Vérifiez votre connexion.';
-      } else if (error.status === 400) {
-        // Erreur de validation Zod
-        const errorData = error.error as EmailErrorResponse;
-        if (typeof errorData.error === 'object' && errorData.error.fieldErrors) {
-          // Afficher les erreurs spécifiques des champs
-          const fieldErrors = errorData.error.fieldErrors;
-          let errorMessages: string[] = [];
+  //     if (error.status === 0) {
+  //       this.submitError = 'Impossible de contacter le serveur. Vérifiez votre connexion.';
+  //     } else if (error.status === 400) {
+  //       // Erreur de validation Zod
+  //       const errorData = error.error as EmailErrorResponse;
+  //       if (typeof errorData.error === 'object' && errorData.error.fieldErrors) {
+  //         // Afficher les erreurs spécifiques des champs
+  //         const fieldErrors = errorData.error.fieldErrors;
+  //         let errorMessages: string[] = [];
 
-          if (fieldErrors.email) errorMessages.push(...fieldErrors.email);
-          if (fieldErrors.subject) errorMessages.push(...fieldErrors.subject);
-          if (fieldErrors.message) errorMessages.push(...fieldErrors.message);
+  //         if (fieldErrors.email) errorMessages.push(...fieldErrors.email);
+  //         if (fieldErrors.subject) errorMessages.push(...fieldErrors.subject);
+  //         if (fieldErrors.message) errorMessages.push(...fieldErrors.message);
 
-          this.submitError = errorMessages.join(', ') || 'Données invalides';
-        } else {
-          this.submitError = 'Données invalides';
-        }
-      } else if (error.status === 500) {
-        const errorData = error.error as EmailErrorResponse;
-        this.submitError = typeof errorData.error === 'string' ? errorData.error : 'Erreur serveur';
-      } else {
-        this.submitError = 'Une erreur inattendue est survenue';
-      }
-    } finally {
-      this.isSubmitting = false;
-    }
-  }
+  //         this.submitError = errorMessages.join(', ') || 'Données invalides';
+  //       } else {
+  //         this.submitError = 'Données invalides';
+  //       }
+  //     } else if (error.status === 500) {
+  //       const errorData = error.error as EmailErrorResponse;
+  //       this.submitError = typeof errorData.error === 'string' ? errorData.error : 'Erreur serveur';
+  //     } else {
+  //       this.submitError = 'Une erreur inattendue est survenue';
+  //     }
+  //   } finally {
+  //     this.isSubmitting = false;
+  //   }
+  // }
 
   private markFormGroupTouched() {
     Object.keys(this.contactForm.controls).forEach(key => {
@@ -113,7 +112,32 @@ export class ContactComponent {
     });
   }
 
-  // Getters pour faciliter l'accès aux erreurs dans le template
+  onSubmit() {
+    if (this.contactForm.valid && !this.isSubmitting) {
+      this.isSubmitting = true;
+
+      const formData = this.contactForm.value;
+
+      const emailTo = 'lucas.raffalli17@gmail.com';
+      const subject = formData.subject;
+      const body = `Email: ${formData.email}\n\nMessage:\n${formData.message}`;
+
+      const mailtoLink = `mailto:${emailTo}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+      window.location.href = mailtoLink;
+
+      setTimeout(() => {
+        this.isSubmitting = false;
+        this.submitSuccess = true;
+        this.contactForm.reset();
+
+        setTimeout(() => {
+          this.submitSuccess = false;
+        }, 3000);
+      }, 1000);
+    }
+  }
+
   get email() { return this.contactForm.get('email'); }
   get subject() { return this.contactForm.get('subject'); }
   get message() { return this.contactForm.get('message'); }
