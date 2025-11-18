@@ -284,6 +284,22 @@
                 {
                     "url": "2025/anomaly/anomaly_icon_EOF_2.png",
                     "alt": "Deuxieme Icone variante de theme \"confin du destin destiny 2\""
+                },
+                {
+                    "url": "2025/anomaly/anniversary_wallpaper.png",
+                    "alt": "Fond d'écran variante de theme \"anniversaire anomaly\""
+                },
+                {
+                    "url": "2025/anomaly/blindTest_1.png",
+                    "alt": "Blind Test Anomaly"
+                },
+                {
+                    "url": "2025/anomaly/blindTest_2.png",
+                    "alt": "Blind Test Anomaly 2"
+                },
+                {
+                    "url": "2025/anomaly/blindTest_3.png",
+                    "alt": "Blind Test Anomaly 3"
                 }
             ]
         },
@@ -293,7 +309,7 @@
             "title": "Hephai",
             "year": 2025,
             "platform": "Behance",
-            "url": "",
+            "url": "https://www.behance.net/gallery/228350251/Projet-HephaiOpen",
             "tags": [
                 "Projet",
                 "2025",
@@ -345,6 +361,127 @@
                 {
                     "url": "2025/hephai/mockup_12.png",
                     "alt": "Mockup de l'application"
+                }
+            ]
+        },
+        {
+            "id": "14",
+            "stars": true,
+            "title": "Aflokkat Concept",
+            "year": 2025,
+            "platform": "Behance",
+            "url": "https://www.behance.net/gallery/238818235/Aflokkat-concept-modernisation-branding",
+            "tags": [
+                "Ecole",
+                "2025",
+                "Concept",
+                "Branding"
+            ],
+            "description": "Concept Branding Aflokkat pas officiel",
+            "images": [
+                {
+                    "url": "2025/aflokkat/mockup/desktop.png",
+                    "alt": "Mockup desktop"
+                },
+                {
+                    "url": "2025/aflokkat/page-1.png",
+                    "alt": "Page 1"
+                },
+                {
+                    "url": "2025/aflokkat/page-2.png",
+                    "alt": "Page 2"
+                },
+                {
+                    "url": "2025/aflokkat/page-3.png",
+                    "alt": "Page 3"
+                },
+                {
+                    "url": "2025/aflokkat/page-4.png",
+                    "alt": "Page 4"
+                },
+                {
+                    "url": "2025/aflokkat/page-5.png",
+                    "alt": "Page 5"
+                },
+                {
+                    "url": "2025/aflokkat/page-6.png",
+                    "alt": "Page 6"
+                },
+                {
+                    "url": "2025/aflokkat/page-7.png",
+                    "alt": "Page 7"
+                },
+                {
+                    "url": "2025/aflokkat/page-8.png",
+                    "alt": "Page 8"
+                },
+                {
+                    "url": "2025/aflokkat/page-9.png",
+                    "alt": "Page 9"
+                },
+                {
+                    "url": "2025/aflokkat/page-10.png",
+                    "alt": "Page 10"
+                },
+                {
+                    "url": "2025/aflokkat/page-11.png",
+                    "alt": "Page 11"
+                },
+                {
+                    "url": "2025/aflokkat/page-12.png",
+                    "alt": "Page 12"
+                },
+                {
+                    "url": "2025/aflokkat/page-13.png",
+                    "alt": "Page 13"
+                },
+                {
+                    "url": "2025/aflokkat/page-14.png",
+                    "alt": "Page 14"
+                },
+                {
+                    "url": "2025/aflokkat/page-15.png",
+                    "alt": "Page 15"
+                },
+                {
+                    "url": "2025/aflokkat/page-16.png",
+                    "alt": "Page 16"
+                },
+                {
+                    "url": "2025/aflokkat/page-17.png",
+                    "alt": "Page 17"
+                },
+                {
+                    "url": "2025/aflokkat/page-18.png",
+                    "alt": "Page 18"
+                },
+                {
+                    "url": "2025/aflokkat/page-19.png",
+                    "alt": "Page 19"
+                },
+                {
+                    "url": "2025/aflokkat/mockup/book.png",
+                    "alt": "Mockup du book"
+                },
+                {
+                    "url": "2025/aflokkat/mockup/desktop_2.png",
+                    "alt": "Mockup desktop 2"
+                },
+                {
+                    "url": "2025/aflokkat/mockup/poster.png",
+                    "alt": "Mockup poster"
+                },
+                {
+                    "url": "2025/aflokkat/mockup/ticket.png",
+                    "alt": "Mockup ticket"
+                },
+                {
+                    "url": "2025/aflokkat/mockup/ticket_2.png",
+                    "alt": "Mockup ticket 2"
+                },
+                {
+                    "url": "2025/aflokkat/mockup/ticket_3.png",
+                    "alt": "Mockup ticket 3"
                 }
             ]
         }
